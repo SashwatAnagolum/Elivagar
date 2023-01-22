@@ -4,121 +4,133 @@ import os
 from create_gate_circs import generate_random_gate_circ, generate_true_random_gate_circ, create_gate_circ, create_batched_gate_circ, get_circ_params
 from create_human_design_circs import generate_human_design_circ
 from metrics import compute_reduced_similarity
-from datasets_nt import load_dataset
+from datasets import load_dataset
 
-ideal = np.concatenate((np.ones((16, 16)), np.zeros((16, 16)), np.zeros((16, 16)), np.zeros((16, 16))))
-ideal_2 = np.concatenate((np.zeros((16, 16)), np.ones((16, 16)), np.zeros((16, 16)), np.zeros((16, 16))))
-ideal = np.concatenate((ideal, ideal_2, ideal_2[::-1, :], ideal[::-1, :]), 1)
 
-# ideal = np.concatenate((np.ones((16, 16)), np.zeros((16, 16))))
-# ideal = np.concatenate((ideal, ideal[::-1, :]), 1)
-
-# ideal = 2 * ideal - 1
-
-dataset = 'vowel_4'
-
-curr_dir = f'./experiment_data/{dataset}/trained_circuits'
-num_qubits = 4
-meas_qubits = [0, 1]
-num_samples_per_class = 150
-
-x_train, y_train, x_test, y_test = load_dataset(dataset, 'angle', 1)
-
-class_0_sel = np.random.choice(num_samples_per_class, 16, False)
-class_1_sel = np.random.choice(num_samples_per_class, 16, False) + num_samples_per_class
-class_2_sel = np.random.choice(num_samples_per_class, 16, False) + num_samples_per_class * 2
-class_3_sel = np.random.choice(num_samples_per_class, 16, False) + num_samples_per_class * 3
-sel_inds = np.concatenate((class_0_sel, class_1_sel, class_2_sel, class_3_sel))
-
-# class_0_sel = np.random.choice(len(x_test) // 2, 16, False)
-# class_1_sel = np.random.choice(len(x_test) // 2, 16, False) + (len(x_test) // 2)
-# sel_inds = np.concatenate((class_0_sel, class_1_sel))
-
-sel_data = x_train[sel_inds]
-# sel_data = np.genfromtxt(curr_dir + '/sel_data.txt')
-
-num_params = 32
-num_data = len(sel_data)
-
-d2_min_scores = []
-d2_mean_scores = []
-d2_var_scores = []
+def compute_reduced_similarity(circ, params, data, single_qubit=False):
+    """
+    Compute the similarity between the reduced density matrices obtained from a circuit's outputs.
+    """
+    num_data = len(data)
+    traces = []
+    circ_fids = np.zeros((num_data, num_data))
     
-d2_t_min_scores = []
-d2_t_mean_scores = []
-d2_t_var_scores = []
+    if not single_qubit:
+        circ_dms = circ(data, params)
 
-mean_mat_scores = []
-mean_t_mat_scores = []
+        for i in range(num_data):
+            traces.append(np.trace(circ_dms[i]))
 
-np.savetxt(curr_dir + '/sel_data.txt', sel_data)
+        for s1 in range(num_data):
+            for s2 in range(s1 + 1, num_data):
+                trace_1 = traces[s1]
+                trace_2 = traces[s2]
+                fid_trace = np.trace(np.matmul(circ_dms[s1], circ_dms[s2]))
 
-for i in range(1000):
-    circ_dir = curr_dir + '/circ_{}'.format(i + 1)
+                curr_score = ((fid_trace) ** 2 / (trace_1 * trace_2)).real
+
+                circ_fids[s1, s2] = curr_score
+                circ_fids[s2, s1] = curr_score  
+
+        circ_fids += np.eye(num_data)
+    else:
+        num_meas_qubits = len(circ)
+        circ_dms = [circ[i](data, params) for i in range(num_meas_qubits)]
+        all_fids = np.zeros((num_meas_qubits, num_data, num_data))
+        
+        for i in range(num_meas_qubits):
+            traces = []
+            
+            for j in range(num_data):
+                traces.append(np.trace(circ_dms[i][j]))
+
+            for s1 in range(num_data):
+                for s2 in range(s1 + 1, num_data):
+                    trace_1 = traces[s1]
+                    trace_2 = traces[s2]
+                    fid_trace = np.trace(np.matmul(circ_dms[i][s1], circ_dms[i][s2]))
+
+                    curr_score = ((fid_trace) ** 2 / (trace_1 * trace_2)).real
+
+                    all_fids[i][s1, s2] = curr_score
+                    all_fids[i][s2, s1] = curr_score  
+
+            all_fids[i] += np.eye(num_data) 
+            
+        circ_fids = np.mean(all_fids, 0)
+            
+    return circ_fids
+
+
+def compute_rep_cap(circ_dir, num_qubits, meas_qubits, data, ideal_matrix, num_param_samples, num_classes):
+    """
+    Compute the representational capacity of a circuit w.r.t. some passed in data.
+    """
+    importance_matrix = 1 - ideal_matrix
+    importance_matrix /= (num_classes - 1)
+    importance_matrix += ideal_matrix
     
     circ_gates, gate_params, inputs_bounds, weights_bounds = get_circ_params(circ_dir)
     
     batched_circ = create_batched_gate_circ(qml.device('lightning.qubit', wires=num_qubits), circ_gates, gate_params, inputs_bounds,
                                         weights_bounds, meas_qubits, 'matrix') 
     
-    params = 2 * np.pi * np.random.sample((num_params, weights_bounds[-1]))
-    
-    if not os.path.exists(circ_dir + '/fid_mats'):
-        os.mkdir(circ_dir + '/fid_mats')
-    
-    np.savetxt(circ_dir + '/fid_mats/metric_params.txt', params) 
-    
-    circ_d2_scores = []
-    circ_d2_t_scores = []
-    circ_mean_mat = np.zeros((num_data, num_data))
-    circ_t_mean_mat = np.zeros((num_data, num_data))
-    
-    for j in range(num_params):
-        curr_params = np.concatenate([params[j] for k in range(num_data)]).reshape((num_data, weights_bounds[-1]))
-        mat = compute_reduced_similarity(batched_circ, curr_params, sel_data)
-        
-        t_mat = mat > ((np.sum(mat) - num_data) / (num_data * (num_data - 1)))
-        
-        diff_mat = mat - ideal
-        diff_2d = np.sum(np.multiply(diff_mat, diff_mat))
-            
-        diff_t_mat = t_mat - ideal
-        diff_2d_t = np.sum(np.multiply(diff_t_mat, diff_t_mat))
-            
-        circ_d2_scores.append(diff_2d)
-        circ_d2_t_scores.append(diff_2d_t)
-            
-        circ_mean_mat += mat / num_params
-        circ_t_mean_mat += t_mat / num_params
+    if not os.path.exists(circ_dir + '/rep_cap'):
+        os.mkdir(circ_dir + '/rep_cap')
 
-    np.savetxt(circ_dir + '/fid_mats/d2_scores_2.txt', circ_d2_scores)
-    np.savetxt(circ_dir + '/fid_mats/d2_t_scores_2.txt', circ_d2_t_scores)
+    params = 2 * np.pi * np.random.sample((num_params, weights_bounds[-1]))
+    circ_mean_thres_mat = np.zeros((num_data, num_data))
+    num_data = data.shape[0]
+    
+    np.savetxt(circ_dir + '/rep_cap/params.txt', params) 
+    
+    for i in range(num_param_samples):
+        curr_params = np.concatenate([params[i] for k in range(num_data)]).reshape((num_data, weights_bounds[-1]))
+        curr_mat = compute_reduced_similarity(batched_circ, curr_params, data)
+        thres_mat = mat > ((np.sum(mat) - num_data) / (num_data * (num_data - 1)))
         
-    d2_min_scores.append(np.min(circ_d2_scores))
-    d2_mean_scores.append(np.mean(circ_d2_scores))
-    d2_var_scores.append(np.var(circ_d2_scores))
+        circ_mean_thres_mat += thres_mat / num_param_samples
+
+    diff_thres_mean_mat = ideal_matrix - circ_t_mean_mat
+    scaled_diff_thres_mean_mat = np.multiply(diff_thres_mean_mat, importance_matrix)
+    rep_cap = (num_data ** 2) - np.sum(np.power(scaled_diff_thres_mean_mat, 2))
+    
+    return rep_cap, circ_thres_mean_mat
+    
+
+def compute_rep_cap_for_circuits(circs_dir, num_circs, circ_prefix, num_qubits, meas_qubits, dataset_name, num_classes,
+                                 samples_per_class, sel_samples_per_class, num_param_samples, encoding_type, 
+                                 num_data_reps, save_circ_mats=False):
+    """
+    Compute representational capacity for a group of circuits in the same folder.
+    """
+    num_sel_samples = num_classes * sel_samples_per_class
+    ideal = np.zeros((num_sel_samples, num_sel_samples))
+    
+    for i in range(num_classes):
+        start_index = i * sel_samples_per_class
+        end_index = (i + 1) * sel_samples_per_class
         
-    d2_t_min_scores.append(np.min(circ_d2_t_scores))
-    d2_t_mean_scores.append(np.mean(circ_d2_t_scores))
-    d2_t_var_scores.append(np.var(circ_d2_t_scores))
+        ideal[start_index:end_index] = 1
+    
+    x_train, y_train, x_test, y_test = load_dataset(dataset_name, encoding_type, num_data_reps)
+    sel_inds = []
+    
+    for i in range(num_classes):
+        sel_inds.append(np.random.choice(samples_per_class, 16, False) + num_samples_per_class * i)
         
-    diff_mean_mat = ideal - circ_mean_mat
-    diff_t_mean_mat = ideal - circ_t_mean_mat   
+    sel_inds = np.concatenate(sel_inds)
+    sel_data = x_train[sel_inds]
     
-    mean_mat_scores.append(np.sum(np.multiply(diff_mean_mat, diff_mean_mat)))
-    mean_t_mat_scores.append(np.sum(np.multiply(diff_t_mean_mat, diff_t_mean_mat)))
+    circ_rep_caps = []
     
-    np.savetxt(circ_dir + '/fid_mats/mean_t_mat.txt', circ_t_mean_mat)
-    
-    print(i)
+    for i in range(num_circs):
+        curr_circ_dir = os.path.join(circs_dir, circ_prefix + f'_{i + 1}')
+        circ_rep_cap, circ_thres_mean_mat = compute_rep_cap(curr_circ_dir, num_qubits, meas_qubits, sel_data, ideal, num_param_samples, num_classes)   
         
-np.savetxt(curr_dir + '/d2_mean_scores_2.txt', d2_mean_scores)
-np.savetxt(curr_dir + '/d2_min_scores_2.txt', d2_min_scores)
-np.savetxt(curr_dir + '/d2_var_scores_2.txt', d2_var_scores)
-    
-np.savetxt(curr_dir + '/d2_t_mean_scores_2.txt', d2_t_mean_scores)
-np.savetxt(curr_dir + '/d2_t_min_scores_2.txt', d2_t_min_scores)
-np.savetxt(curr_dir + '/d2_t_var_scores_2.txt', d2_t_var_scores)
-    
-np.savetxt(curr_dir + '/d2_mean_mat_scores_kta.txt', mean_mat_scores)
-np.savetxt(curr_dir + '/d2_mean_t_mat_scores_kta.txt', mean_t_mat_scores)
+        if save_circ_mats:
+            np.savetxt(os.path.join(curr_circ_dir, 'rep_cap/thres_mean_mat.txt'), circ_thres_mean_mat)
+            
+        circ_rep_caps.append(circ_rep_cap)
+            
+    np.savetxt(os.path.join(circs_dir 'rep_caps.txt'), circ_rep_caps)

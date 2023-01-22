@@ -1,4 +1,6 @@
 import numpy as np
+import torch
+
 
 def load_dataset(name, embedding_type, num_reps):
     x_train = np.genfromtxt('./experiment_data/{}/x_train.txt'.format(name))
@@ -8,7 +10,7 @@ def load_dataset(name, embedding_type, num_reps):
     
     num_dims = 16
     
-    if name == 'moons_300':
+    if name == 'moons':
         x_train = x_train[:, :2]
         x_test = x_test[:, :2]
         
@@ -202,3 +204,33 @@ def load_dataset(name, embedding_type, num_reps):
     x_test = np.mod(np.concatenate([x_test for i in range(num_reps)], 1), 2 * np.pi)   
     
     return x_train, y_train, x_test, y_test
+
+
+class TorchDataset(torch.utils.data.Dataset):
+    def __init__(self, dataset_name, embed_type, reps, train=True, reshape_labels=False):
+        x_train, y_train, x_test, y_test = load_dataset(dataset_name, embed_type, reps)
+        
+        if reshape_labels and len(y_train.shape) == 1:
+            y_train = y_train.reshape(len(y_train), 1)
+            y_test = y_test.reshape(len(y_test), 1)
+        
+        if train:  
+            inds = np.random.permutation(len(x_train))
+            
+            self.x_train = x_train[inds]
+            self.y_train = y_train[inds]
+            
+            self.length = len(x_train)
+        else:
+            inds = np.random.permutation(len(x_test))
+            
+            self.x_train = x_test[inds]
+            self.y_train = y_test[inds]
+            
+            self.length = len(x_test)
+        
+    def __len__(self):
+        return self.length
+    
+    def __getitem__(self, ind):
+        return self.x_train[ind], self.y_train[ind]

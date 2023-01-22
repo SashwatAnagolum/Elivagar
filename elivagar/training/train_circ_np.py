@@ -24,43 +24,46 @@ def compute_tq_model_acc(preds, labels, num_meas_qubits):
     return torch.sum(torch.eq(torch.sum(torch.gt(torch.multiply(preds[:, :num_meas_qubits], labels), 0), 1), num_meas_qubits).to(torch.float))
  
 
-def train_tq_model(model, num_meas_qubits, opt, loss, data_loader, test_data_loader, test_data_size, steps, print_freq=1, loss_window=50, acc_fn=None,
+def train_tq_model(model, num_meas_qubits, opt, loss, data_loader, test_data_loader, epochs, print_freq=1, loss_window=50, acc_fn=None,
                   use_test=True):
     if acc_fn == None:
         acc_fn = compute_tq_model_acc
     
     losses = []
     
-    for i in range(steps):
-        x, y = next(iter(data_loader))
-        y = y.to(torch.long)
-        
-        opt.zero_grad()
-        
-        out = model(x)
-        
-        batch_loss = loss(out, y)
-        
-        batch_loss.backward()
-        
-        losses.append(batch_loss.detach().item())
-        
-        opt.step()
-        
-        if not (i % print_freq) and i:
-            print(f'Step {i + 1} | Loss: {(losses[-1])}')
+    for epoch in range(epochs):
+        for step, (x, y) in enumerate(data_loader):
+            y = y.to(torch.long)
 
+            opt.zero_grad()
+
+            out = model(x)
+
+            batch_loss = loss(out, y)
+
+            batch_loss.backward()
+
+            losses.append(batch_loss.detach().item())
+
+            opt.step()
+
+            if not (step % print_freq):
+                print(f'Epoch {epoch + 1} | Step {step + 1} | Loss: {(losses[-1])}')
 
     test_losses = []
     test_accs = []
     
     if use_test:
+        num_test_samples = 0
+        
         for x, y in test_data_loader:
             preds = model(x)
 
             test_losses.append(loss(preds, y).detach().numpy())
             test_accs.append(acc_fn(preds, y, num_meas_qubits).detach().numpy())
             
-        return np.mean(test_losses), np.sum(test_accs) / test_data_size
+            num_test_samples += x.shape[0]
+            
+        return np.mean(test_losses), np.sum(test_accs) / num_test_samples
     else:
         return

@@ -1,9 +1,4 @@
-import pennylane as qml
 import numpy as np
-
-# from qiskit import QuantumCircuit
-# from qiskit.circuit import Parameter, CircuitInstruction
-# from qiskit.circuit.library import XXPlusYYGate
 
 def generate_random_gate_circ(num_qubits, num_embed_gates, num_var_params=None, ent_prob=0.5, 
                               cxz_prob=0.2, pauli_prob=0.1, consecutive_embeds=True):   
@@ -105,22 +100,35 @@ def generate_random_gate_circ(num_qubits, num_embed_gates, num_var_params=None, 
     return circ_gates[1:], gate_params, inputs_bounds, weights_bounds
 
 
-def generate_true_random_gate_circ(num_qubits, num_embed_gates, num_var_params=0, ent_prob=0.5, 
-                              cxz_prob=0.2, pauli_prob=0.1):
+def generate_true_random_gate_circ(num_qubits, num_embed_gates, num_var_params=None, ent_prob=0.5, 
+                              cxz_prob=0.2, pauli_prob=0.1, gateset=None, ind_gate_probs=None):
     circ_gates = []
     inputs_bounds = [0]
     weights_bounds = [0]
     gate_params = []
 
     qubit_choices = [0, 1]
-    gate_choices = [['ry', 'rz', 'rx'], ['cx', 'cz', 'crz', 'crx', 'cry', 'xx', 'yy', 'zz']]
-    gate_num_params = [[1, 1, 1], [0, 0, 1, 1, 1, 1, 1, 1]]
-    probs = [1 - ent_prob, ent_prob]
-    c_probs = [cxz_prob / (2 * ent_prob) for i in range(2)] + [(1 - ((cxz_prob + pauli_prob) / ent_prob)) / 3 for i in range(3)]
-    c_probs += [pauli_prob / (3 * ent_prob) for i in range(3)]
+    
+    if gateset is None:
+        gate_choices = [['ry', 'rz', 'rx'], ['cx', 'cz', 'crz', 'crx', 'cry', 'xx', 'yy', 'zz']]
+        
+        c_probs = [cxz_prob / (2 * ent_prob) for i in range(2)] + [(1 - ((cxz_prob + pauli_prob) / ent_prob)) / 3 for i in range(3)]
+        c_probs += [pauli_prob / (3 * ent_prob) for i in range(3)]
+        
+        r_probs = [1 / 3 for i in range(3)]
+        gate_probs = [r_probs, c_probs] 
+    else:
+        gate_choices = gateset
 
-    r_probs = [1 / 3 for i in range(3)]
-    gate_probs = [r_probs, c_probs]    
+        if ind_gate_probs is None:
+            num_1q = len(gateset[0])
+            num_2q = len(gateset[1])
+            
+            gate_probs = [[1 / num_1q for i in range(num_1q)], [1 / num_2q for i in range(num_2q)]]
+        else:
+            gate_probs = ind_gate_probs
+        
+    probs = [1 - ent_prob, ent_prob]
     max_params = num_embed_gates + num_var_params
     param_indices = []
     
@@ -129,14 +137,13 @@ def generate_true_random_gate_circ(num_qubits, num_embed_gates, num_var_params=0
     
     while circ_params < max_params:
         gate_qubits = np.random.choice(qubit_choices, p=probs)
-        gate_choice_index = np.random.choice(len(gate_choices[gate_qubits]), p=gate_probs[gate_qubits])
-        circ_gates.append(gate_choices[gate_qubits][gate_choice_index])
+        circ_gates.append(np.random.choice(gate_choices[gate_qubits], p=gate_probs[gate_qubits]))
         gate_params.append(np.random.choice(num_qubits, gate_qubits + 1, False))
         
-        if gate_num_params[gate_qubits][gate_choice_index] != 0:
+        if circ_gates[-1] not in ['cx', 'cz']:
+            circ_params += 1
             param_indices.append(curr_index)
             
-        circ_params += gate_num_params[gate_qubits][gate_choice_index]
         curr_index += 1
     
     embeds_indices = np.random.choice(param_indices, num_embed_gates, False)
@@ -155,180 +162,6 @@ def generate_true_random_gate_circ(num_qubits, num_embed_gates, num_var_params=0
                 
     return circ_gates, gate_params, inputs_bounds, weights_bounds
 
-
-# def generate_device_aware_gate_circ(num_qubits, num_embed_gates, num_var_params=0, ent_prob=0.5, cxz_prob=0.2, pauli_prob=0.1,
-#                                     ibm_device_name=None, num_device_qubits=None, connectivity=None, t1_times=None, t2_times=None,
-#                                     readout_success_probs=None, basis_gates=None, two_qubit_gate_success_probs=None):
-
-
-def create_gate_circ(dev, gates, gate_params, inputs_bounds, weights_bounds, measured_qubits, ret_type='exp', diff_method='best', interface='tf'):
-    mapping = {
-        'ry': qml.RY,
-        'rx': qml.RX,
-        'rz': qml.RZ,
-        'cx': qml.CNOT,
-        'cz': qml.CZ,
-        'cry': qml.CRY,
-        'crz': qml.CRZ,
-        'crx': qml.CRX,
-        'yy': qml.IsingYY,
-        'zz': qml.IsingZZ,
-        'xx': qml.IsingXX,
-        'rot': qml.Rot,
-        'meas': qml.measure,
-        'h': qml.Hadamard,
-        's': qml.S,
-        'x': qml.PauliX,
-        'y': qml.PauliY,
-        'z': qml.PauliZ,
-        'iqp': qml.IQPEmbedding,
-        'ryy': qml.IsingYY,
-        'rzz': qml.IsingZZ,
-        'rxx': qml.IsingXX,
-        'sx': qml.SX,
-        'cp': qml.CPhase,
-        'xy': qml.IsingXY
-    }   
-
-    @qml.qnode(dev, interface=interface, diff_method=diff_method)
-    def torch_qnn(inputs, weights): 
-        for i, gate in enumerate(gates):
-            if weights_bounds[i] == weights_bounds[i + 1]:
-                data_in = inputs[inputs_bounds[i]: inputs_bounds[i + 1]]
-            else:
-                data_in = weights[weights_bounds[i]: weights_bounds[i + 1]]   
-
-            mapping[gate](*data_in, wires=gate_params[i])     
-        
-        if ret_type == 'exp':
-            return [qml.expval(qml.PauliZ(wires=i)) for i in measured_qubits]
-        elif ret_type == 'state':
-            return qml.state()
-        elif ret_type == 'sample':
-            return qml.sample(wires=measured_qubits)
-        elif ret_type == 'matrix':
-            return qml.density_matrix(wires=measured_qubits)
-        else:
-            return qml.probs(dev.wires)
-    
-    return torch_qnn
-
-
-def create_batched_gate_circ(dev, gates, gate_params, inputs_bounds, weights_bounds, measured_qubits, ret_type='exp'):
-    mapping = {
-        'ry': qml.RY,
-        'rx': qml.RX,
-        'rz': qml.RZ,
-        'cx': qml.CNOT,
-        'cz': qml.CZ,
-        'cry': qml.CRY,
-        'crz': qml.CRZ,
-        'crx': qml.CRX,
-        'yy': qml.IsingYY,
-        'zz': qml.IsingZZ,
-        'xx': qml.IsingXX,
-        'rot': qml.Rot,
-        'meas': qml.measure,
-        'h': qml.Hadamard,
-        's': qml.S,
-        'x': qml.PauliX,
-        'y': qml.PauliY,
-        'z': qml.PauliZ,
-        'iqp': qml.IQPEmbedding,
-        'ryy': qml.IsingYY,
-        'rzz': qml.IsingZZ,
-        'rxx': qml.IsingXX,
-        'sx': qml.SX,
-        'cp': qml.CPhase,
-        'xy': qml.IsingXY
-    }   
-
-    @qml.batch_params(all_operations=True)
-    @qml.qnode(dev, interface=None, diff_method=None)
-    def batched_qnn(inputs, weights): 
-        for i, gate in enumerate(gates):
-            is_not_param = weights_bounds[i] == weights_bounds[i + 1]
-            is_not_data = inputs_bounds[i] == inputs_bounds[i + 1]
-    
-            if is_not_param and is_not_data:
-                data_in = None
-            elif is_not_param:
-                data_in = inputs[:, inputs_bounds[i]: inputs_bounds[i + 1]]
-            else:
-                data_in = weights[:, weights_bounds[i]: weights_bounds[i + 1]]   
-            
-            data_in = data_in.flatten() if data_in is not None else data_in
-            
-            if np.any(data_in != None):    
-                mapping[gate](data_in, wires=gate_params[i]) 
-            else:
-                mapping[gate](wires=gate_params[i])
-        
-        if ret_type == 'exp':
-            return [qml.expval(qml.PauliZ(wires=i)) for i in measured_qubits]
-        elif ret_type == 'state':
-            return qml.state()
-        elif ret_type == 'sample':
-            return qml.sample(wires=measured_qubits)
-        elif ret_type == 'matrix':
-            return qml.density_matrix(wires=measured_qubits)
-        else:
-            return qml.probs(dev.wires)
-    
-    return batched_qnn
-
-
-def create_qiskit_circ(gates, gate_params, inputs_bounds, weights_bounds, measured_qubits, num_qubits):
-    mapping = {
-        'ry': lambda circ, data, qubit_inds: circ.ry(data[0], qubit_inds[0]),
-        'rx': lambda circ, data, qubit_inds: circ.rx(data[0], qubit_inds[0]),
-        'rz': lambda circ, data, qubit_inds: circ.rz(data[0], qubit_inds[0]),
-        'cx': lambda circ, data, qubit_inds: circ.cx(qubit_inds[0], qubit_inds[1]),
-        'cz': lambda circ, data, qubit_inds: circ.cz(qubit_inds[0], qubit_inds[1]),
-        'cry': lambda circ, data, qubit_inds: circ.cry(data[0], qubit_inds[0], qubit_inds[1]),
-        'crz': lambda circ, data, qubit_inds: circ.crz(data[0], qubit_inds[0], qubit_inds[1]),
-        'crx': lambda circ, data, qubit_inds: circ.crx(data[0], qubit_inds[0], qubit_inds[1]),
-        'yy': lambda circ, data, qubit_inds: circ.ryy(data[0], qubit_inds[0], qubit_inds[1]),
-        'zz': lambda circ, data, qubit_inds: circ.ryy(data[0], qubit_inds[0], qubit_inds[1]),
-        'xx': lambda circ, data, qubit_inds: circ.rxx(data[0], qubit_inds[0], qubit_inds[1]),
-        'h': lambda circ, data, qubit_inds: circ.h(qubit_inds[0]),
-        's': lambda circ, data, qubit_inds: circ.s(qubit_inds[0]),
-        'x': lambda circ, data, qubit_inds: circ.x(qubit_inds[0]),
-        'y': lambda circ, data, qubit_inds: circ.y(qubit_inds[0]),
-        'z': lambda circ, data, qubit_inds: circ.z(qubit_inds[0]),
-        'sx': lambda circ, data, qubit_inds: circ.sx(qubit_inds[0]),
-        'xy': lambda circ, data, qubit_inds: circ.append(CircuitInstruction(XXPlusYYGate(data[0]), qubit_inds, [])),
-        'cp': lambda circ, data, qubit_inds: circ.cp(data[0], qubit_inds[0], qubit_inds[1]),
-        'zx': lambda circ, data, qubit_inds: circ.rzx(data[0], qubit_inds[0], qubit_inds[1]) 
-    }
-    
-    circuit = QuantumCircuit(num_qubits, len(measured_qubits))
-    input_params = [Parameter('x_{}'.format(i)) for i in range(inputs_bounds[-1])]
-    var_params = [Parameter('t_{}'.format(i)) for i in range(weights_bounds[-1])]
-    
-    for i, gate in enumerate(gates):
-        if weights_bounds[i] == weights_bounds[i + 1]:
-            data_in = input_params[inputs_bounds[i]: inputs_bounds[i + 1]]
-        else:
-            data_in = var_params[weights_bounds[i]: weights_bounds[i + 1]]   
-
-        mapping[gate](circuit, data_in, gate_params[i])     
-        
-    for i in range(len(measured_qubits)):
-        circuit.measure(measured_qubits[i], i)
-    
-    def qiskit_qnn(inputs, weights): 
-        param_mapping = dict()
-        
-        for i in range(len(inputs)):
-            param_mapping[input_params[i]] = inputs[i]
-            
-        for i in range(len(weights)):
-            param_mapping[var_params[i]] = weights[i]
-        
-        return circuit.bind_parameters(param_mapping)
-    
-    return qiskit_qnn
 
 def generate_random_embedding(num_qubits, gates, gate_params, inputs_bounds, weights_bounds, ent_prob=0.5):
     qubit_choices = [0, 1]
@@ -417,21 +250,6 @@ def replace_embedding(old_embed_dir, new_embed_dir):
 
     np.savetxt(old_embed_dir + '/gates.txt', old_gates, fmt="%s")
     np.savetxt(old_embed_dir + '/gate_params.txt', np.array(old_gate_params, dtype='object'), fmt="%s")
-    
-
-def get_circ_params(dir_path):
-    inputs_bounds = [int(i) for i in np.genfromtxt(dir_path + '/inputs_bounds.txt')]
-    weights_bounds = [int(i) for i in np.genfromtxt(dir_path + '/weights_bounds.txt')]
-    gates = open(dir_path + '/gates.txt').read().split('\n')
-    
-    if '[' in open(dir_path + '/gate_params.txt').read().split('\n')[0]:
-        gate_params = [[int(k) for k in j[1:-1].replace(',', '').split(' ')] for j in open(dir_path + '/gate_params.txt').read().split('\n')[:-1]]
-    else:
-        gate_params = [[int(k) for k in j.replace(',', '').split(' ')] for j in open(dir_path + '/gate_params.txt').read().split('\n')[:-1]]
-    
-    gates = list(filter(lambda x: True if x != '' else False, gates))
-    
-    return gates, gate_params, inputs_bounds, weights_bounds
 
 
 def get_var_part_only(gates, gate_params, inputs_bounds, weights_bounds):
@@ -450,45 +268,6 @@ def get_var_part_only(gates, gate_params, inputs_bounds, weights_bounds):
             
     return new_gates, new_gate_params, new_weights_bounds
 
-
-def create_var_circ(dev, gates, gate_params, weights_bounds, measured_qubits, ret_type='exp', intf='tf'):
-    mapping = {
-        'ry': qml.RY,
-        'rx': qml.RX,
-        'rz': qml.RZ,
-        'cx': qml.CNOT,
-        'cz': qml.CZ,
-        'cry': qml.CRY,
-        'crz': qml.CRZ,
-        'crx': qml.CRX,
-        'yy': qml.IsingYY,
-        'zz': qml.IsingZZ,
-        'xx': qml.IsingXX,
-        'rot': qml.Rot
-    }    
-    
-    if intf == 'autograd':
-        gate_params = [i.numpy() for i in gate_params]
-
-    @qml.qnode(dev, interface=intf)
-    def torch_qnn(weights): 
-        for i, gate in enumerate(gates):
-            if weights_bounds[i] != weights_bounds[i + 1]:
-                data_in = weights[weights_bounds[i]: weights_bounds[i + 1]]
-                mapping[gate](*data_in, wires=gate_params[i]) 
-            else:
-                mapping[gate](wires=gate_params[i])     
-        
-        if ret_type == 'exp':
-            return [qml.expval(qml.PauliZ(wires=i)) for i in measured_qubits]
-        elif ret_type == 'state':
-            return qml.state()
-        elif ret_type == 'sample':
-            return qml.sample(wires=measured_qubits)
-        else:
-            return qml.probs(range(num_qubits))
-    
-    return torch_qnn
 
 def sample_subcircuit(gates, gate_params, inputs_bounds, weights_bounds, num_subcircuit_params, num_subcircuit_embeds):
     num_gates = len(gates)
@@ -553,3 +332,18 @@ def sample_subcircuit(gates, gate_params, inputs_bounds, weights_bounds, num_sub
             weights_filt.append(weights_bounds[i])
         
     return sel_gates, sel_gate_params, sel_inputs_bounds, sel_weights_bounds, inputs_filt, weights_filt
+
+
+def get_circ_params(dir_path):
+    inputs_bounds = [int(i) for i in np.genfromtxt(dir_path + '/inputs_bounds.txt')]
+    weights_bounds = [int(i) for i in np.genfromtxt(dir_path + '/weights_bounds.txt')]
+    gates = open(dir_path + '/gates.txt').read().split('\n')
+    
+    if '[' in open(dir_path + '/gate_params.txt').read().split('\n')[0]:
+        gate_params = [[int(k) for k in j[1:-1].replace(',', '').split(' ')] for j in open(dir_path + '/gate_params.txt').read().split('\n')[:-1]]
+    else:
+        gate_params = [[int(k) for k in j.replace(',', '').split(' ')] for j in open(dir_path + '/gate_params.txt').read().split('\n')[:-1]]
+    
+    gates = list(filter(lambda x: True if x != '' else False, gates))
+    
+    return gates, gate_params, inputs_bounds, weights_bounds
