@@ -101,7 +101,8 @@ def generate_random_gate_circ(num_qubits, num_embed_gates, num_var_params=None, 
 
 
 def generate_true_random_gate_circ(num_qubits, num_embed_gates, num_var_params=None, ent_prob=0.5, 
-                              cxz_prob=0.2, pauli_prob=0.1, gateset=None, ind_gate_probs=None):
+                                   cxz_prob=0.2, pauli_prob=0.1, gateset=None, ind_gate_probs=None,
+                                   gateset_param_nums=None):
     circ_gates = []
     inputs_bounds = [0]
     weights_bounds = [0]
@@ -110,7 +111,8 @@ def generate_true_random_gate_circ(num_qubits, num_embed_gates, num_var_params=N
     qubit_choices = [0, 1]
     
     if gateset is None:
-        gate_choices = [['ry', 'rz', 'rx'], ['cx', 'cz', 'crz', 'crx', 'cry', 'xx', 'yy', 'zz']]
+        gate_choices = [['ry', 'rz', 'rx'], ['cx', 'cz', 'crz', 'crx', 'cry', 'rxx', 'ryy', 'rzz']]
+        gate_param_nums = [[1, 1, 1], [0, 0, 1, 1, 1, 1, 1, 1]]
         
         c_probs = [cxz_prob / (2 * ent_prob) for i in range(2)] + [(1 - ((cxz_prob + pauli_prob) / ent_prob)) / 3 for i in range(3)]
         c_probs += [pauli_prob / (3 * ent_prob) for i in range(3)]
@@ -119,6 +121,7 @@ def generate_true_random_gate_circ(num_qubits, num_embed_gates, num_var_params=N
         gate_probs = [r_probs, c_probs] 
     else:
         gate_choices = gateset
+        gate_param_nums = gateset_param_nums
 
         if ind_gate_probs is None:
             num_1q = len(gateset[0])
@@ -137,30 +140,48 @@ def generate_true_random_gate_circ(num_qubits, num_embed_gates, num_var_params=N
     
     while circ_params < max_params:
         gate_qubits = np.random.choice(qubit_choices, p=probs)
-        circ_gates.append(np.random.choice(gate_choices[gate_qubits], p=gate_probs[gate_qubits]))
-        gate_params.append(np.random.choice(num_qubits, gate_qubits + 1, False))
+        chosen_gate_index = np.random.choice(len(gate_choices[gate_qubits]), p=gate_probs[gate_qubits])
         
-        if circ_gates[-1] not in ['cx', 'cz']:
-            circ_params += 1
-            param_indices.append(curr_index)
+        curr_gate_num_params = gate_param_nums[gate_qubits][chosen_gate_index]
+        
+        if circ_params + curr_gate_num_params <= max_params:
+            circ_gates.append(gate_choices[gate_qubits][chosen_gate_index])
+            gate_params.append(np.random.choice(num_qubits, gate_qubits + 1, False))
             
-        curr_index += 1
-    
-    embeds_indices = np.random.choice(param_indices, num_embed_gates, False)
+            circ_params += curr_gate_num_params
+            param_indices += [curr_index for i in range(curr_gate_num_params)]
+
+            curr_index += 1
+     
+    param_indices = np.array(param_indices)
+    embed_inds = np.zeros(len(param_indices)).astype(bool)
+    embed_inds[np.random.choice(param_indices, num_embed_gates, False)] = True
+    var_inds = param_indices[np.invert(embed_inds)]
+    embed_inds = param_indices[embed_inds]
     
     for i in range(len(circ_gates)):
-        if circ_gates[i] in ['cx', 'cz']:
+        if i not in param_indices:
             inputs_bounds.append(inputs_bounds[-1])
             weights_bounds.append(weights_bounds[-1])
         else:
-            if i in embeds_indices:
-                inputs_bounds.append(inputs_bounds[-1] + 1)
-                weights_bounds.append(weights_bounds[-1])
+            if i in embed_inds:
+                inputs_bounds.append(inputs_bounds[-1] + np.sum(embed_inds == i))
             else:
                 inputs_bounds.append(inputs_bounds[-1])
-                weights_bounds.append(weights_bounds[-1] + 1)
+            
+            if i in var_inds:
+                weights_bounds.append(weights_bounds[-1] + np.sum(var_inds == i))
+            else:
+                weights_bounds.append(weights_bounds[-1])                           
                 
     return circ_gates, gate_params, inputs_bounds, weights_bounds
+
+
+def append_adjoint_to_circuit(circ_gates, gate_params, inputs_bounds, weights_bounds):
+    new_circ_gates = [i for i in circ_gates]
+    new_gate_params = [[j for j in i] for i in gate_params]
+    new_weights_bounds = [i for i in weights_bounds]
+    new_inputs_bounds = [i for i in inputs_bounds]
 
 
 def generate_random_embedding(num_qubits, gates, gate_params, inputs_bounds, weights_bounds, ent_prob=0.5):

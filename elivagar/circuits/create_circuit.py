@@ -98,11 +98,11 @@ def create_gate_circ(dev, gates, gate_params, inputs_bounds, weights_bounds, mea
     @qml.qnode(dev, interface=interface, diff_method=diff_method)
     def torch_qnn(inputs, weights): 
         for i, gate in enumerate(gates):
-            if weights_bounds[i] == weights_bounds[i + 1]:
-                data_in = inputs[inputs_bounds[i]: inputs_bounds[i + 1]]
-            else:
-                data_in = weights[weights_bounds[i]: weights_bounds[i + 1]]   
+            data_in = []
+            data_in.append(inputs[inputs_bounds[i]: inputs_bounds[i + 1]])
+            data_in.append(weights[weights_bounds[i]: weights_bounds[i + 1]])
 
+            data_in = np.concatenate(data_in, 0)
             mapping[gate](*data_in, wires=gate_params[i])     
         
         if ret_type == 'exp':
@@ -149,17 +149,14 @@ def create_batched_gate_circ(dev, gates, gate_params, inputs_bounds, weights_bou
     @qml.qnode(dev, interface=None, diff_method=None)
     def batched_qnn(inputs, weights): 
         for i, gate in enumerate(gates):
-            is_not_param = weights_bounds[i] == weights_bounds[i + 1]
-            is_not_data = inputs_bounds[i] == inputs_bounds[i + 1]
-    
-            if is_not_param and is_not_data:
-                data_in = None
-            elif is_not_param:
-                data_in = inputs[:, inputs_bounds[i]: inputs_bounds[i + 1]]
-            else:
-                data_in = weights[:, weights_bounds[i]: weights_bounds[i + 1]]   
+            data_in = []
+            data_in.append(inputs[:, inputs_bounds[i]: inputs_bounds[i + 1]])
+            data_in.append(weights[:, weights_bounds[i]: weights_bounds[i + 1]])
+
+            data_in = np.concatenate(data_in, 1)
             
-            data_in = data_in.flatten() if data_in is not None else data_in
+            if data_in.shape[1] == 1:
+                data_in = data_in.flatten()
             
             if np.any(data_in != None):    
                 mapping[gate](data_in, wires=gate_params[i]) 
@@ -209,11 +206,11 @@ def create_qiskit_circ(gates, gate_params, inputs_bounds, weights_bounds, measur
     var_params = [Parameter('t_{}'.format(i)) for i in range(weights_bounds[-1])]
     
     for i, gate in enumerate(gates):
-        if weights_bounds[i] == weights_bounds[i + 1]:
-            data_in = input_params[inputs_bounds[i]: inputs_bounds[i + 1]]
-        else:
-            data_in = var_params[weights_bounds[i]: weights_bounds[i + 1]]   
+        data_in = []
+        data_in.append(input_params[inputs_bounds[i]: inputs_bounds[i + 1]])
+        data_in.append(var_params[weights_bounds[i]: weights_bounds[i + 1]])
 
+        data_in = data_in[0] + data_in[1]
         mapping[gate](circuit, data_in, gate_params[i])     
         
     for i in range(len(measured_qubits)):
@@ -232,7 +229,56 @@ def create_qiskit_circ(gates, gate_params, inputs_bounds, weights_bounds, measur
     
     return qiskit_qnn
 
+
+def create_braket_gate_circ(gates, gate_params, inputs_bounds, weights_bounds, num_qubits, 
+                            qubit_mapping=None, verbatim_box=False):
+    mapping = {
+        'ry': lambda c, ind, theta: c.ry(ind[0], theta[0]),
+        'rx': lambda c, ind, theta: c.rx(ind[0], theta[0]),
+        'rz': lambda c, ind, theta: c.rz(ind[0], theta[0]),
+        'cx': lambda c, ind, theta: c.cnot(ind[0], ind[1]),
+        'cz': lambda c, ind, theta: c.cz(ind[0], ind[1]),
+        'ryy': lambda c, ind, theta: c.yy(ind[0], ind[1], theta[0]),
+        'rzz': lambda c, ind, theta: c.zz(ind[0], ind[1], theta[0]),
+        'rxx': lambda c, ind, theta: c.xx(ind[0], ind[1], theta[0]),
+        'h': lambda c, ind, theta: c.h(ind[0]),
+        's': lambda c, ind, theta: c.s(ind[0]),
+        'x': lambda c, ind, theta: c.x(ind[0]),
+        'y': lambda c, ind, theta: c.y(ind[0]),
+        'z': lambda c, ind, theta: c.z(ind[0]),
+        'cp': lambda c, ind, theta: c.cphaseshift(ind[0], ind[1], theta[0]),
+        'rxy': lambda c, ind, theta: c.xy(ind[0], ind[1], theta[0]),
+        'gpi': lambda c, ind, theta: c.gpi(ind[0], theta[0]),
+        'gpi2': lambda c, ind, theta: c.gpi2(ind[0], theta[0]),
+        'ms': lambda c, ind, theta: c.ms(ind[0], ind[1], theta[0], theta[1]),
+        'v': lambda c, ind, theta: c.v(ind[0]),
+        'ecr': lambda c, ind, theta: c.ecr(ind[0], ind[1])
+    }   
     
+    if np.all(qubit_mapping == None):
+        qubit_mapping = np.array([i for i in range(num_qubits)])
+    else:
+        qubit_mapping = np.array(qubit_mapping)
+    
+    def generate_braket_circ(inputs, weights): 
+        braket_circ = Circuit()
+        
+        for i, gate in enumerate(gates):
+            data_in = []
+            data_in.append(inputs[inputs_bounds[i]: inputs_bounds[i + 1]])
+            data_in.append(weights[weights_bounds[i]: weights_bounds[i + 1]])
+            data_in = np.concatenate(data_in, 0) 
+            
+            mapping[gate](braket_circ, qubit_mapping[gate_params[i]], data_in)
+
+        if verbatim_box:
+            braket_circ = Circuit().add_verbatim_box(braket_circ)
+                
+        return braket_circ
+
+    return generate_braket_circ
+
+
 class TQCirc(tq.QuantumModule):
     def __init__(self, gates, gate_params, inputs_bounds, weights_bounds, num_qubits, use_softmax=False):            
         super().__init__()
@@ -269,7 +315,8 @@ class TQCirc(tq.QuantumModule):
             'sx': tqf.sx,
             'x': tqf.paulix,
             'cp': cphase,
-            'rxy': rxy
+            'rxy': rxy,
+            'amp_enc': tq.AmplitudeEncoder()
         } 
         
         self.n_wires = num_qubits
@@ -285,6 +332,7 @@ class TQCirc(tq.QuantumModule):
         self.embed_flags = []
         self.param_flags = []
         self.gate_wires = []
+        self.gate_list = gates
         
         self.num_gates = len(gates)
         
@@ -317,6 +365,10 @@ class TQCirc(tq.QuantumModule):
 
         for i in range(self.num_gates):
             if self.embed_flags[i]:
+                if self.gate_list[i] == 'amp_enc':
+                    self.embed_gates[emb_ind](self.device, x)
+                    continue 
+                
                 self.embed_gates[emb_ind](self.device, wires=self.gate_wires[i],
                     params=x[:, self.gate_params[emb_ind]])
                 emb_ind += 1

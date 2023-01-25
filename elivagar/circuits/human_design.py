@@ -1,6 +1,7 @@
 import numpy as np
 import pennylane as qml
 
+
 def generate_human_design_circ(dev, num_qubits, enc_layer, var_layer, num_enc_layers, num_var_layers, enc_layer_options, var_layer_options, measured_qubits, ret_type='exp'):
     """
     Generate a human-designed circuit using layer templates from the Pennylane library.
@@ -34,6 +35,7 @@ def generate_human_design_circ(dev, num_qubits, enc_layer, var_layer, num_enc_la
     
     return human_design_circ
 
+
 def get_iqp_embedding_layer(num_qubits, enc_layer_num, circ_gates, gate_params, inputs_bounds, weights_bounds):
     """
     Get the gates in an IPQ embedding layer.
@@ -50,12 +52,11 @@ def get_iqp_embedding_layer(num_qubits, enc_layer_num, circ_gates, gate_params, 
     inputs_bounds += [inputs_bounds[-1] + i + 1 for i in range(num_qubits)]
     weights_bounds += [weights_bounds[-1] for i in range(num_qubits)]
             
-    circ_gates += ['zz' for i in range(num_iqp_rzz_gates)]
+    circ_gates += ['rzz' for i in range(num_iqp_rzz_gates)]
     gate_params += [[i, j] for i in range(num_qubits) for j in range(i + 1, num_qubits)]
     inputs_bounds += [inputs_bounds[-1] + i + 1 for i in range(num_iqp_rzz_gates)]
     weights_bounds += [weights_bounds[-1] for i in range(num_iqp_rzz_gates)]
-    
-    return
+
 
 def get_angle_embedding_layer(num_qubits, enc_layer_num, circ_gates, gate_params, inputs_bounds, weights_bounds):
     """
@@ -67,8 +68,17 @@ def get_angle_embedding_layer(num_qubits, enc_layer_num, circ_gates, gate_params
     gate_params += [[i] for i in range(num_qubits)]
     inputs_bounds += [inputs_bounds[-1] + i + 1 for i in range(num_qubits)]
     weights_bounds += [weights_bounds[-1] for i in range(num_qubits)]  
-    
-    return
+
+
+def get_amp_encoding_layer(num_qubits, enc_layer_num, circ_gates, gate_params, inputs_bounds, weights_bounds):
+    """
+    Get an amplitude encoding layer. WARNING: only use as the first gate / thing in a circuit.
+    """
+    circ_gates += ['amp_enc']
+    gate_params += [[0]]
+    inputs_bounds += [2 ** num_qubits]
+    weights_bounds += [0]
+
 
 def get_basic_var_layer(num_qubits, var_layer_num, circ_gates, gate_params, inputs_bounds, weights_bounds):
     """
@@ -85,8 +95,7 @@ def get_basic_var_layer(num_qubits, var_layer_num, circ_gates, gate_params, inpu
     gate_params += [[i, (i + 1) % num_qubits] for i in range(num_qubits)]
     inputs_bounds += [inputs_bounds[-1] for i in range(num_qubits)]
     weights_bounds += [weights_bounds[-1] for i in range(num_qubits)]  
-    
-    return
+
 
 def convert_human_design_circ_to_gate_circ(num_qubits, enc_layer, var_layer, num_enc_layers, num_var_layers):
     """
@@ -100,7 +109,11 @@ def convert_human_design_circ_to_gate_circ(num_qubits, enc_layer, var_layer, num
     inputs_bounds = [0]
     weights_bounds = [0]
     
-    layer_dict = {'angle': get_angle_embedding_layer, 'iqp': get_iqp_embedding_layer, 'basic': get_basic_var_layer}
+    layer_dict = {
+        'angle': get_angle_embedding_layer,
+        'iqp': get_iqp_embedding_layer,
+        'basic': get_basic_var_layer,
+        'amp': get_amp_encoding_layer}
     
     for i in range(num_enc_layers):
         layer_dict[enc_layer](num_qubits, i, circ_gates, gate_params, inputs_bounds, weights_bounds)
