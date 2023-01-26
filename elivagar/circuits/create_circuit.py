@@ -2,7 +2,11 @@ import numpy as np
 import torch
 import torchquantum as tq
 import torchquantum.functional as tqf
+import qiskit
+import pennylane as qml
 
+from qiskit import QuantumCircuit
+from qiskit.circuit import Parameter
 from torchquantum.functional import gate_wrapper
 from torchquantum.operators import Operation
 

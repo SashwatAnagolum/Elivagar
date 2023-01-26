@@ -33,11 +33,7 @@ def compute_noise_metric(circ_gates, gate_params, inputs_bounds, weights_bounds,
     """
     Compute the Clifford noise resilience for a circuit.
     """
-    circ_list = [convert_to_cdc(circ_gates, gate_params, inputs_bounds, weights_bounds) for i in range(num_cdcs)]
-    
-    bitstrings = [str(bin(i))[2:] for i in range(2 ** num_qubits)]
-    bitstrings = ['0' * (num_qubits - len(i)) + i for i in bitstrings]
-    
+    circ_list = [convert_to_cdc(circ_gates, gate_params, inputs_bounds, weights_bounds) for i in range(num_cdcs)] 
     meas_qubits = [i for i in range(num_qubits)]
 
     circ_noisy_dist = np.zeros((num_cdcs, 2 ** num_qubits))

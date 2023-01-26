@@ -21,9 +21,10 @@ def mse_vec_batch_loss(preds, labels):
 
 def batch_acc(preds, labels):
     """
-    Accuracy for a batch of predictions and labels. Use only with 0-dimensional predictions.
+    Accuracy for a batch of predictions and labels. Use only with 1-dimensional predictions.
     """    
     return np.mean(mse_batch_loss(preds, labels, False) < 1)
+
 
 def vec_batch_acc(preds, labels):
     """
