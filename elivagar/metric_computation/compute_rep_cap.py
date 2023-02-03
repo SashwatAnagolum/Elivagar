@@ -1,10 +1,11 @@
 import numpy as np
 import os
+import pennylane as qml
 
-from create_gate_circs import generate_random_gate_circ, generate_true_random_gate_circ, create_gate_circ, create_batched_gate_circ, get_circ_params
-from create_human_design_circs import generate_human_design_circ
-from metrics import compute_reduced_similarity
-from datasets import load_dataset
+from elivagar.circuits.arbitrary import get_circ_params
+from elivagar.circuits.create_circuit import create_gate_circ, create_batched_gate_circ
+from elivagar.circuits.human_design import generate_human_design_circ
+from elivagar.utils.datasets import load_dataset
 
 
 def compute_reduced_similarity(circ, params, data, single_qubit=False):
@@ -78,32 +79,35 @@ def compute_rep_cap(circ_dir, num_qubits, meas_qubits, data, ideal_matrix, num_p
     if not os.path.exists(circ_dir + '/rep_cap'):
         os.mkdir(circ_dir + '/rep_cap')
 
-    params = 2 * np.pi * np.random.sample((num_params, weights_bounds[-1]))
-    circ_mean_thres_mat = np.zeros((num_data, num_data))
     num_data = data.shape[0]
+    params = 2 * np.pi * np.random.sample((num_param_samples, weights_bounds[-1]))
+    circ_mean_thres_mat = np.zeros((num_data, num_data)) 
     
     np.savetxt(circ_dir + '/rep_cap/params.txt', params) 
     
     for i in range(num_param_samples):
         curr_params = np.concatenate([params[i] for k in range(num_data)]).reshape((num_data, weights_bounds[-1]))
         curr_mat = compute_reduced_similarity(batched_circ, curr_params, data)
-        thres_mat = mat > ((np.sum(mat) - num_data) / (num_data * (num_data - 1)))
+        thres_mat = curr_mat > ((np.sum(curr_mat) - num_data) / (num_data * (num_data - 1)))
         
         circ_mean_thres_mat += thres_mat / num_param_samples
 
-    diff_thres_mean_mat = ideal_matrix - circ_t_mean_mat
+    diff_thres_mean_mat = ideal_matrix - circ_mean_thres_mat
     scaled_diff_thres_mean_mat = np.multiply(diff_thres_mean_mat, importance_matrix)
     rep_cap = (num_data ** 2) - np.sum(np.power(scaled_diff_thres_mean_mat, 2))
     
-    return rep_cap, circ_thres_mean_mat
+    return rep_cap, circ_mean_thres_mat
     
 
 def compute_rep_cap_for_circuits(circs_dir, num_circs, circ_prefix, num_qubits, meas_qubits, dataset_name, num_classes,
-                                 samples_per_class, sel_samples_per_class, num_param_samples, encoding_type, 
+                                 sel_samples_per_class, num_param_samples, encoding_type, 
                                  num_data_reps, save_circ_mats=False):
     """
     Compute representational capacity for a group of circuits in the same folder.
+    Currently only handles balanced datasets - need to update to handle unbalanced datasets as well.
     """
+    x_train, y_train, x_test, y_test = load_dataset(dataset_name, encoding_type, num_data_reps)
+    num_samples_per_class = len(x_train) // num_classes
     num_sel_samples = num_classes * sel_samples_per_class
     ideal = np.zeros((num_sel_samples, num_sel_samples))
     
@@ -112,12 +116,11 @@ def compute_rep_cap_for_circuits(circs_dir, num_circs, circ_prefix, num_qubits, 
         end_index = (i + 1) * sel_samples_per_class
         
         ideal[start_index:end_index] = 1
-    
-    x_train, y_train, x_test, y_test = load_dataset(dataset_name, encoding_type, num_data_reps)
+
     sel_inds = []
     
     for i in range(num_classes):
-        sel_inds.append(np.random.choice(samples_per_class, 16, False) + num_samples_per_class * i)
+        sel_inds.append(np.random.choice(sel_samples_per_class, 16, False) + num_samples_per_class * i)
         
     sel_inds = np.concatenate(sel_inds)
     sel_data = x_train[sel_inds]
@@ -133,4 +136,4 @@ def compute_rep_cap_for_circuits(circs_dir, num_circs, circ_prefix, num_qubits, 
             
         circ_rep_caps.append(circ_rep_cap)
             
-    np.savetxt(os.path.join(circs_dir 'rep_caps.txt'), circ_rep_caps)
+    np.savetxt(os.path.join(circs_dir, 'rep_caps.txt'), circ_rep_caps)

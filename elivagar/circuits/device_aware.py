@@ -1,9 +1,9 @@
+import numpy as np
 import qiskit
 
-import qiskit.providers.aer.noise as noise
 from qiskit import IBMQ
-from qiskit_aer import AerSimulator
-from qiskit_aer.noise import device as noisy_device
+from qiskit.providers.aer import AerSimulator
+import qiskit.providers.aer.noise as noise
 
 import numpy as np
 
