@@ -152,7 +152,7 @@ def create_batched_gate_circ(dev, gates, gate_params, inputs_bounds, weights_bou
     @qml.batch_params(all_operations=True)
     @qml.qnode(dev, interface=None, diff_method=None)
     def batched_qnn(inputs, weights): 
-        for i, gate in enumerate(gates):
+        for i, gate in enumerate(gates):            
             data_in = []
             data_in.append(inputs[:, inputs_bounds[i]: inputs_bounds[i + 1]])
             data_in.append(weights[:, weights_bounds[i]: weights_bounds[i + 1]])

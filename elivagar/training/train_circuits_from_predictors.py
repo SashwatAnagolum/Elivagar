@@ -2,15 +2,15 @@ import torch
 import numpy as np
 import os
 
-from create_gate_circs import get_circ_params
-from train_circ_np import TQMseLoss
-from datasets import TorchDataset
-
+from elivagar.circuits.arbitrary import get_circ_params
+from elivagar.training.train_circ_np import TQMseLoss
+from elivagar.utils.datasets import TorchDataset
 from elivagar.training.train_tq_circ_and_save import train_tq_circ_and_save_results
 from elivagar.metric_computation.compute_composite_scores import compute_composite_scores_for_circs
 
-def train_elivagar_circuits(circ_dir, dataset, embed_type, num_data_reps, device_name, num_train_steps, num_test_data, num_qubits, num_meas_qubits,
-                            num_data_in_matrix, num_candidates_per_circuit=100, num_circuits=2500, num_runs=5, noise_metric_dir_name=None, noise_importance=0.5):
+def train_elivagar_circuits(circ_dir, dataset, embed_type, num_data_reps, device_name, num_epochs, batch_size, num_qubits, num_meas_qubits,
+                            num_data_for_rep_cap, num_params_for_rep_cap, num_cdcs, num_candidates_per_circuit=100,
+                            num_circuits=2500, num_runs=5, noise_importance=0.5):
     """
     Compute the composite scores for all the circuits in a directory and train the top-ranked circuits.
     """
@@ -19,12 +19,11 @@ def train_elivagar_circuits(circ_dir, dataset, embed_type, num_data_reps, device
     train_data = TorchDataset(dataset, embed_type, num_data_reps, reshape_labels=True)
     test_data = TorchDataset(dataset, embed_type, num_data_reps, False, reshape_labels=True)
 
-    train_data_loader = torch.utils.data.DataLoader(train_data, batch_size=32, sampler=torch.utils.data.RandomSampler(train_data))
-    test_data_loader = torch.utils.data.DataLoader(test_data, batch_size=32, sampler=torch.utils.data.SequentialSampler(test_data))
+    train_data_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, sampler=torch.utils.data.RandomSampler(train_data))
+    test_data_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, sampler=torch.utils.data.SequentialSampler(test_data))
     
-    composite_scores = compute_composite_scores_for_circs(circ_dir, num_circuits, device_name, num_data_in_matrix, noise_metric_dir_name,
-                                                         noise_importance)
-    print(composite_scores[:25])
+    composite_scores, rep_cap_scores, cnr_scores = compute_composite_scores_for_circs(circ_dir, num_circuits,
+        device_name, num_data_for_rep_cap, num_params_for_rep_cap, num_cdcs, noise_importance)
     
     ordering = np.random.permutation(num_circuits)
     
@@ -67,7 +66,7 @@ def train_elivagar_circuits(circ_dir, dataset, embed_type, num_data_reps, device
         np.savetxt(curr_circ_dir + '/sel_circuit_ind.txt', [curr_best_circuit_ind])
         np.savetxt(curr_circ_dir + '/sel_circuit_score.txt', [np.max(curr_candidate_scores)])
         
-        circ_losses, circ_accs = train_tq_circ_and_save_results(curr_circ_dir, train_data_loader, test_data_loader, num_test_data, num_runs, num_train_steps,
+        circ_losses, circ_accs = train_tq_circ_and_save_results(curr_circ_dir, train_data_loader, test_data_loader, num_runs, num_epochs,
                                        num_qubits, num_meas_qubits, loss)
         
         trial_losses.append(circ_losses)

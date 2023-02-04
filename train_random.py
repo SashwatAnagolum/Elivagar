@@ -12,7 +12,7 @@ from elivagar.circuits.arbitrary import generate_true_random_gate_circ
 
 def generate_random_circuits(save_dir, num_circs, num_qubits, num_embeds, num_params, gateset=None):
     if not os.path.exists(save_dir):
-        os.mkdir(save_dir)
+        os.makedirs(save_dir)
 
     for i in range(num_circs):
         curr_circ_dir = os.path.join(save_dir, f'circ_{i + 1}')
@@ -33,17 +33,15 @@ def generate_random_circuits(save_dir, num_circs, num_qubits, num_embeds, num_pa
         circ_gates, gate_params, inputs_bounds, weights_bounds = generate_true_random_gate_circ(num_qubits,
             num_embeds, num_params, ent_prob, cxz * ent_prob, pauli * (1 - cxz) * ent_prob, gateset)
 
-        np.savetxt(curr_circ_dir + '/gates.txt', circ_gates, fmt="%s")
-        np.savetxt(curr_circ_dir + '/gate_params.txt', gate_params, fmt="%s")
-        np.savetxt(curr_circ_dir + '/inputs_bounds.txt', inputs_bounds)
-        np.savetxt(curr_circ_dir + '/weights_bounds.txt', weights_bounds)
+        np.savetxt(os.path.join(curr_circ_dir, '/gates.txt', circ_gates, fmt="%s"))
+        np.savetxt(os.path.join(curr_circ_dir, '/gate_params.txt', gate_params, fmt="%s"))
+        np.savetxt(os.path.join(curr_circ_dir, '/inputs_bounds.txt', inputs_bounds))
+        np.savetxt(os.path.join(curr_circ_dir, '/weights_bounds.txt', weights_bounds))
 
         
-def train_random_circuits(save_dir, num_circs, num_qubits, num_embeds, num_params, num_epochs, dataset_name,
+def train_random_circuits(save_dir, num_circs, num_qubits, num_epochs, dataset_name,
                           num_data_reps, num_meas_qubits, batch_size, num_runs):
     loss_fn = TQMseLoss(num_meas_qubits, num_qubits)
-
-    print(dataset_name, num_data_reps)
     
     train_data = TorchDataset(dataset_name, 'angle', num_data_reps, reshape_labels=True)
     test_data = TorchDataset(dataset_name, 'angle', num_data_reps, False, reshape_labels=True)
@@ -51,7 +49,7 @@ def train_random_circuits(save_dir, num_circs, num_qubits, num_embeds, num_param
     test_data_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False)
     
     for i in range(num_circs):
-        print(f'circuit {i + 1}')
+        print(f'Circuit {i + 1}')
         curr_circ_dir = os.path.join(save_dir, f'circ_{i + 1}')
 
         train_tq_circ_and_save_results(curr_circ_dir, train_data_loader, test_data_loader,
@@ -101,9 +99,9 @@ def main():
             
     generate_random_circuits(args.save_dir, args.num_circs, args.num_qubits, args.num_embeds, args.num_params, args.gateset)
     
-    train_random_circuits(args.save_dir, args.num_circs, args.num_qubits, args.num_embeds, args.num_params,
-                          args.num_epochs, args.dataset, args.num_data_reps, num_meas_qubits,
-                          args.batch_size, args.num_runs_per_circ)
+    train_random_circuits(args.save_dir, args.num_circs, args.num_qubits,
+                          args.num_epochs, args.dataset, args.num_data_reps,
+                          num_meas_qubits, args.batch_size, args.num_runs_per_circ)
     
 if __name__ == '__main__':
     main()

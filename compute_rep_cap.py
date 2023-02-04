@@ -38,15 +38,17 @@ def main():
     if args.num_data_reps is None:
         args.num_data_reps = curr_dataset_hyperparams['num_data_reps']
         
-    num_meas_qubits = curr_dataset_hyperparams['num_meas_qubits']    
-    meas_qubits = [i for i in range(num_meas_qubits)]
+    if args.num_meas_qubits is None:
+        args.num_meas_qubits = curr_dataset_hyperparams['num_meas_qubits']   
+        
+    meas_qubits = [i for i in range(args.num_meas_qubits)]
     num_classes = curr_dataset_hyperparams['num_classes']
     
     compute_rep_cap_for_circuits(args.circs_dir, args.num_circs, args.circ_prefix, args.num_qubits, 
                                  args.num_meas_qubits, args.dataset, num_classes,
                                  args.num_samples_per_class,
                                  args.num_param_samples, args.encoding_type, 
-                                 args.num_data_reps, save_circ_mats=False)
+                                 args.num_data_reps, args.save_matrices)
     
 if __name__ == '__main__':
     main()

@@ -34,7 +34,7 @@ def run_qiskit_circ(circuit, dev, num_meas_qubits, num_shots=1024, transpile_cir
         
     outputs = execute(circuit, backend=dev, shots=num_shots).result().get_counts()
     
-    if mode is 'exp':
+    if mode == 'exp':
         qubit_probs = np.zeros((num_meas_qubits, 2))
 
         for key in outputs.keys():
@@ -43,7 +43,7 @@ def run_qiskit_circ(circuit, dev, num_meas_qubits, num_shots=1024, transpile_cir
 
         qubit_probs = qubit_probs[::-1, :] / num_shots
         ret_val = qubit_probs[:, 0] - qubit_probs[:, 1]
-    elif mode is 'probs':
+    elif mode == 'probs':
         ret_val = np.zeros(2 ** num_meas_qubits)
         
         for key in outputs.keys():
