@@ -102,7 +102,7 @@ def generate_random_gate_circ(num_qubits, num_embed_gates, num_var_params=None, 
 
 def generate_true_random_gate_circ(num_qubits, num_embed_gates, num_var_params=None, ent_prob=0.5, 
                                    cxz_prob=0.2, pauli_prob=0.1, gateset=None, ind_gate_probs=None,
-                                   gateset_param_nums=None):
+                                   gateset_param_nums=None, num_desired_gates=None):
     circ_gates = []
     inputs_bounds = [0]
     weights_bounds = [0]
@@ -130,32 +130,62 @@ def generate_true_random_gate_circ(num_qubits, num_embed_gates, num_var_params=N
             gate_probs = [[1 / num_1q for i in range(num_1q)], [1 / num_2q for i in range(num_2q)]]
         else:
             gate_probs = ind_gate_probs
-        
+
+    gate_param_nums = [np.array(j) for j in gate_param_nums]
     probs = [1 - ent_prob, ent_prob]
     max_params = num_embed_gates + num_var_params
     param_indices = []
     
     circ_params = 0
     curr_index = 0
-    
-    while circ_params < max_params:
-        gate_qubits = np.random.choice(qubit_choices, p=probs)
-        chosen_gate_index = np.random.choice(len(gate_choices[gate_qubits]), p=gate_probs[gate_qubits])
-        
-        curr_gate_num_params = gate_param_nums[gate_qubits][chosen_gate_index]
-        
-        if circ_params + curr_gate_num_params <= max_params:
-            circ_gates.append(gate_choices[gate_qubits][chosen_gate_index])
-            gate_params.append(np.random.choice(num_qubits, gate_qubits + 1, False))
-            
-            circ_params += curr_gate_num_params
-            param_indices += [curr_index for i in range(curr_gate_num_params)]
 
-            curr_index += 1
-     
+    if num_desired_gates is None:
+        while circ_params < max_params:
+            gate_qubits = np.random.choice(qubit_choices, p=probs)
+            chosen_gate_index = np.random.choice(len(gate_choices[gate_qubits]), p=gate_probs[gate_qubits])
+
+            curr_gate_num_params = gate_param_nums[gate_qubits][chosen_gate_index]
+
+            if circ_params + curr_gate_num_params <= max_params:
+                circ_gates.append(gate_choices[gate_qubits][chosen_gate_index])
+                gate_params.append(np.random.choice(num_qubits, gate_qubits + 1, False))
+
+                circ_params += curr_gate_num_params
+                param_indices += [curr_index for i in range(curr_gate_num_params)]
+
+                curr_index += 1
+    else:    
+        num_1q_gates = num_desired_gates[0]
+        num_2q_gates = num_desired_gates[1]
+        
+        gates_1q = np.random.choice(len(gate_choices[0]), num_1q_gates, p=gate_probs[0])
+        gates_2q = np.random.choice(len(gate_choices[1]), num_2q_gates, p=gate_probs[1])
+        
+        circ_gate_param_nums = np.array(gate_param_nums[0])[gates_1q]
+        circ_gate_param_nums = np.concatenate((circ_gate_param_nums, np.array(gate_param_nums[1])[gates_2q]))
+
+        raw_gate_params = [[j] for j in np.random.choice(num_qubits, num_1q_gates)]
+        raw_gate_params += [np.random.choice(num_qubits, 2, False) for i in range(num_2q_gates)]
+
+        circ_gates = [gate_choices[0][j] for j in gates_1q] + [gate_choices[1][j] for j in gates_2q]
+
+        gate_ordering = np.random.permutation(num_1q_gates + num_2q_gates)
+        
+        circ_gates = [circ_gates[j] for j in gate_ordering]
+        gate_params = [raw_gate_params[j] for j in gate_ordering]
+        circ_gate_param_nums = circ_gate_param_nums[gate_ordering]
+        
+        param_indices = []
+        
+        for j, num_params_in_gate in enumerate(circ_gate_param_nums):
+            param_indices += [j for i in range(num_params_in_gate)]
+
+        num_var_params = param_indices
+        num_embeds = 0
+    
     param_indices = np.array(param_indices)
     embed_inds = np.zeros(len(param_indices)).astype(bool)
-    embed_inds[np.random.choice(param_indices, num_embed_gates, False)] = True
+    embed_inds[np.random.choice(len(param_indices), num_embed_gates, False)] = True
     var_inds = param_indices[np.invert(embed_inds)]
     embed_inds = param_indices[embed_inds]
     
