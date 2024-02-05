@@ -1,0 +1,15 @@
+python compute_clifford_nr.py --dataset moons --num_circs 2500 --num_cdcs 128 --device_name rigetti_aspen_m_3 --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/rigetti_aspen_m_3/moons/16_params/ --device_properties_file ./device_properties/rigetti_aspen_m_3/rigetti_aspen_m_3_07_09_2023_15_57_07.pkl
+
+python compute_clifford_nr.py --dataset mnist_4 --num_circs 2500 --num_cdcs 128 --device_name rigetti_aspen_m_3 --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/rigetti_aspen_m_3/mnist_4/40_params/ --device_properties_file ./device_properties/rigetti_aspen_m_3/rigetti_aspen_m_3_07_09_2023_15_57_07.pkl
+
+python compute_clifford_nr.py --dataset bank --num_circs 2500 --num_cdcs 128 --device_name rigetti_aspen_m_3 --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/rigetti_aspen_m_3/bank/20_params/ --device_properties_file ./device_properties/rigetti_aspen_m_3/rigetti_aspen_m_3_07_09_2023_15_57_07.pkl
+
+python compute_clifford_nr.py --dataset fmnist_2 --num_circs 2500 --num_cdcs 128 --device_name rigetti_aspen_m_3 --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/rigetti_aspen_m_3/fmnist_2/32_params/ --device_properties_file ./device_properties/rigetti_aspen_m_3/rigetti_aspen_m_3_07_09_2023_15_57_07.pkl
+
+python compute_clifford_nr.py --dataset vowel_4 --num_circs 2500 --num_cdcs 128 --device_name oqc_lucy --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/oqc_lucy/vowel_4/40_params/ --device_properties_file ./device_properties/oqc_lucy/oqc_lucy_07_09_2023_15_57_07.pkl
+
+python compute_clifford_nr.py --dataset mnist_2 --num_circs 2500 --num_cdcs 128 --device_name oqc_lucy --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/oqc_lucy/mnist_2/20_params/ --device_properties_file ./device_properties/oqc_lucy/oqc_lucy_07_09_2023_15_57_07.pkl
+
+python compute_clifford_nr.py --dataset vowel_2 --num_circs 100 --num_cdcs 128 --device_name oqc_lucy --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/oqc_lucy/vowel_2/32_params/ --device_properties_file ./device_properties/oqc_lucy/oqc_lucy_07_09_2023_15_57_07.pkl
+
+python compute_clifford_nr.py --dataset fmnist_4 --num_circs 2500 --num_cdcs 128 --device_name oqc_lucy --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/oqc_lucy/fmnist_4/24_params/ --device_properties_file ./device_properties/oqc_lucy/oqc_lucy_07_09_2023_15_57_07.pkl

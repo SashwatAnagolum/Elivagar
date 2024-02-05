@@ -1,0 +1,143 @@
+es:
+  random_search: False
+  population_size: 100
+  parent_size: 30
+  mutation_size: 40
+  mutation_prob: 0.4
+  crossover_size: 30
+  n_iterations: 100
+  est_success_rate: True
+  score_mode: acc_succ
+  gene_mask: null
+  num_params: 8
+  eval:
+    use_noise_model: False
+    use_real_qc: False
+    bsz: 32
+    n_test_samples: 150
+
+dataset:
+  name: mnist_2
+  root: './examples/data/mnist_2'
+  input_name: data
+  target_name: target
+  split: valid
+  n_valid_samples: null
+
+model:
+  name: super_qfc0
+  transpile_before_run: False
+  load_op_list: False
+  arch:
+    n_wires: 4
+    n_meas_wires: 1
+    encoder_op_list_name: 4x4_ryzxy
+    n_layers_per_block: 2
+    q_layer_name: farhi_s0
+    n_blocks: 8
+    n_front_share_blocks: 0
+    n_front_share_wires: 1
+    n_front_share_ops: 1
+  sampler:
+    strategy:
+      name: plain
+
+criterion:
+  name: mse_1_4
+  acc_name: acc_1_4
+
+optimizer:
+  name: adam
+  lr: 5.0e-3
+  weight_decay: 1.0e-4
+  lambda_lr: 1.0e-2
+  min_lr: 1.0e-4
+
+scheduler:
+  name: cosine_warm
+
+trainer:
+  name: q_trainer
+  add_noise: False
+  act_quant: False
+  act_quant_skip_last_node: True
+  act_quant_loss: True
+  act_quant_loss_lambda: 10
+
+run:
+  n_warm_epochs: 30
+  n_epochs: 200
+  n_warm_epochs: 0
+  bsz: 32
+  workers_per_gpu: 8
+  device: cpu
+
+run:
+  bsz: 10000
+
+debug:
+  pdb: False
+  set_seed: True
+  seed: 42
+
+regularization:
+  unitary_loss: False
+  unitary_loss_lambda_trainable: False
+  unitary_loss_lambda: 0
+
+legalization:
+  legalize: False
+  epoch_interval: 9999999999
+  step_interval: 9999999999
+
+callbacks:
+  - callback: 'MaxSaver'
+    name: 'superacc/largest_valid'
+  - callback: 'Saver'
+    max_to_keep: 10
+
+qiskit:
+  use_qiskit: False
+  use_real_qc: False
+  backend_name: ibm_nairobi
+  noise_model_name: ibm_nairobi
+  basis_gates_name: null
+  n_shots: 8192
+  initial_layout: null
+  seed_transpiler: 42
+  seed_simulator: 42
+  optimization_level: 2
+  est_success_rate: False
+  max_jobs: 1
+
+ckpt:
+  load_ckpt: True
+  load_trainer: False
+  name: 'checkpoints/step-10000.pt'
+
+verbose: False
+
+get_n_params: False
+
+prune:
+  eval:
+    remove_ops: False
+    remove_ops_thres: null
+
+es:
+  random_search: False
+  population_size: 100
+  parent_size: 30
+  mutation_size: 40
+  mutation_prob: 0.4
+  crossover_size: 30
+  n_iterations: 100
+  est_success_rate: True
+  score_mode: acc_succ
+  gene_mask: null
+  num_params: 8
+  eval:
+    use_noise_model: False
+    use_real_qc: False
+    bsz: 32
+    n_test_samples: 150

@@ -1,0 +1,15 @@
+python examples/train.py examples/configs/ours/rzx_rxx/train_super/moons_300_16.yaml
+
+python examples/train.py examples/configs/ours/rzx_rxx/train_super/bank_20.yaml
+
+python examples/train.py examples/configs/ours/rzx_rxx/train_super/mnist_2_20.yaml
+
+python examples/train.py examples/configs/ours/rzx_rxx/train_super/fmnist_4_24.yaml
+
+python examples/train.py examples/configs/ours/rzx_rxx/train_super/fmnist_2_32.yaml
+
+python examples/train.py examples/configs/ours/rzx_rxx/train_super/vowel_2_32.yaml
+
+python examples/train.py examples/configs/ours/rzx_rxx/train_super/vowel_4_40.yaml
+
+python examples/train.py examples/configs/ours/rzx_rxx/train_super/mnist_4_40.yaml

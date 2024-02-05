@@ -1,0 +1,27 @@
+python compute_rep_cap.py --dataset moons --num_circs 2500 --encoding_type angle --circs_dir ./ours/device_aware/ibm_lagos/moons/16_params/
+python compute_rep_cap.py --dataset mnist_4 --num_circs 2500 --encoding_type angle --circs_dir ./ours/device_aware/ibm_lagos/mnist_4/40_params/
+
+python compute_rep_cap.py --dataset bank --num_circs 2500 --encoding_type angle --circs_dir ./ours/device_aware/ibm_perth/bank/20_params/
+python compute_rep_cap.py --dataset fmnist_2 --num_circs 2500 --encoding_type angle --circs_dir ./ours/device_aware/ibm_perth/fmnist_2/32_params/ 
+
+python compute_rep_cap.py --dataset vowel_2 --num_circs 2500 --encoding_type angle --circs_dir ./ours/device_aware/ibm_nairobi/vowel_2/32_params/
+python compute_rep_cap.py --dataset mnist_2 --num_circs 2500 --encoding_type angle --circs_dir ./ours/device_aware/ibm_nairobi/mnist_2/20_params/
+
+python compute_rep_cap.py --dataset vowel_4 --num_circs 2500 --encoding_type angle --circs_dir ./ours/device_aware/ibmq_jakarta/vowel_4/40_params/
+python compute_rep_cap.py --dataset fmnist_4 --num_circs 2500 --encoding_type angle --circs_dir ./ours/device_aware/ibmq_jakarta/fmnist_4/24_params/
+
+
+
+
+
+python compute_rep_cap.py --dataset moons --num_circs 100 --encoding_type angle --circs_dir ./ours/device_aware/ibm_osaka/moons/16_params/
+python compute_rep_cap.py --dataset mnist_4 --num_circs 100 --encoding_type angle --circs_dir ./ours/device_aware/ibm_osaka/mnist_4/40_params/
+
+python compute_rep_cap.py --dataset bank --num_circs 100 --encoding_type angle --circs_dir ./ours/device_aware/ibm_osaka/bank/20_params/
+python compute_rep_cap.py --dataset fmnist_2 --num_circs 100 --encoding_type angle --circs_dir ./ours/device_aware/ibm_osaka/fmnist_2/32_params/ 
+
+python compute_rep_cap.py --dataset vowel_2 --num_circs 100 --encoding_type angle --circs_dir ./ours/device_aware/ibm_osaka/vowel_2/32_params/
+python compute_rep_cap.py --dataset mnist_2 --num_circs 100 --encoding_type angle --circs_dir ./ours/device_aware/ibm_osaka/mnist_2/20_params/
+
+python compute_rep_cap.py --dataset vowel_4 --num_circs 100 --encoding_type angle --circs_dir ./ours/device_aware/ibm_osaka/vowel_4/40_params/
+python compute_rep_cap.py --dataset fmnist_4 --num_circs 100 --encoding_type angle --circs_dir ./ours/device_aware/ibm_osaka/fmnist_4/24_params/

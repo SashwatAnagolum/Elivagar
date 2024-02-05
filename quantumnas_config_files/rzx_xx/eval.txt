@@ -1,0 +1,34 @@
+python examples/eval.py examples/configs/ours/eval/lima/moons_300_16.yaml --run-dir=runs/sub/lima/ours.train_sub.lima.moons_300_16.yaml --save_dir=../searched_circuits/moons_300_16_ibmq_lima
+
+python examples/eval.py examples/configs/ours/eval/lima/bank_20.yaml --run-dir=runs/sub/lima/ours.train_sub.lima.bank_20.yaml --save_dir=../searched_circuits/bank_20_ibmq_lima
+
+python examples/eval.py examples/configs/ours/eval/lima/mnist_2_20.yaml --run-dir=runs/sub/lima/ours.train_sub.lima.mnist_2_20.yaml --save_dir=../searched_circuits/mnist_2_20_ibmq_lima
+
+python examples/eval.py examples/configs/ours/eval/lima/fmnist_4_24.yaml --run-dir=runs/sub/lima/ours.train_sub.lima.fmnist_4_24.yaml --save_dir=../searched_circuits/fmnist_4_24_ibmq_lima
+
+
+python examples/eval.py examples/configs/ours/eval/nairobi/moons_300_16.yaml --run-dir=runs/sub/nairobi/ours.train_sub.nairobi.moons_300_16.yaml --save_dir=../searched_circuits/moons_300_16_ibm_nairobi
+
+python examples/eval.py examples/configs/ours/eval/nairobi/bank_20.yaml --run-dir=runs/sub/nairobi/ours.train_sub.nairobi.bank_20.yaml --save_dir=../searched_circuits/bank_20_ibm_nairobi
+
+python examples/eval.py examples/configs/ours/eval/nairobi/mnist_2_20.yaml --run-dir=runs/sub/nairobi/ours.train_sub.nairobi.mnist_2_20.yaml --save_dir=../searched_circuits/mnist_2_20_ibm_nairobi
+
+python examples/eval.py examples/configs/ours/eval/nairobi/fmnist_4_24.yaml --run-dir=runs/sub/nairobi/ours.train_sub.nairobi.fmnist_4_24.yaml --save_dir=../searched_circuits/fmnist_4_24_ibm_nairobi
+
+
+python examples/eval.py examples/configs/ours/eval/manila/fmnist_2_32.yaml --run-dir=runs/sub/manila/ours.train_sub.manila.fmnist_2_32.yaml --save_dir=../searched_circuits/fmnist_2_32_ibmq_manila
+
+python examples/eval.py examples/configs/ours/eval/manila/vowel_2_32.yaml --run-dir=runs/sub/manila/ours.train_sub.manila.vowel_2_32.yaml --save_dir=../searched_circuits/vowel_2_32_ibmq_manila
+
+python examples/eval.py examples/configs/ours/eval/manila/mnist_4_40.yaml --run-dir=runs/sub/manila/ours.train_sub.manila.mnist_4_40.yaml --save_dir=../searched_circuits/mnist_4_40_ibmq_manila
+
+python examples/eval.py examples/configs/ours/eval/manila/vowel_4_40.yaml --run-dir=runs/sub/manila/ours.train_sub.manila.vowel_4_40.yaml --save_dir=../searched_circuits/vowel_4_40_ibmq_manila
+
+
+python examples/eval.py examples/configs/ours/eval/quito/fmnist_2_32.yaml --run-dir=runs/sub/quito/ours.train_sub.quito.fmnist_2_32.yaml --save_dir=../searched_circuits/fmnist_2_32_ibmq_quito
+
+python examples/eval.py examples/configs/ours/eval/quito/vowel_2_32.yaml --run-dir=runs/sub/quito/ours.train_sub.quito.vowel_2_32.yaml --save_dir=../searched_circuits/vowel_2_32_ibmq_quito
+
+python examples/eval.py examples/configs/ours/eval/quito/mnist_4_40.yaml --run-dir=runs/sub/quito/ours.train_sub.quito.mnist_4_40.yaml --save_dir=../searched_circuits/mnist_4_40_ibmq_quito
+
+python examples/eval.py examples/configs/ours/eval/quito/vowel_4_40.yaml --run-dir=runs/sub/quito/ours.train_sub.quito.vowel_4_40.yaml --save_dir=../searched_circuits/vowel_4_40_ibmq_quito

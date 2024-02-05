@@ -1,0 +1,17 @@
+#!/bin/bash
+# quantumnat rxyz + cz
+python train_circuits.py --dataset moons --circs_dir ./quantumnas/searched_circuits/rxyz/revision/moons_16_ibm_lagos --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./quantumnas/searched_circuits/rxyz/revision/moons_16_ibm_lagos/with_quantumnat --use_quantumnat --num_circs 1
+
+python train_circuits.py --dataset bank --circs_dir ./quantumnas/searched_circuits/rxyz/revision/bank_20_ibm_perth --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./quantumnas/searched_circuits/rxyz/revision/bank_20_ibm_perth/with_quantumnat --use_quantumnat --num_circs 1
+
+python train_circuits.py --dataset mnist_2 --circs_dir ./quantumnas/searched_circuits/rxyz/revision/mnist_2_20_ibm_nairobi --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./quantumnas/searched_circuits/rxyz/revision/mnist_2_20_ibm_nairobi/with_quantumnat --use_quantumnat --num_circs 1
+
+python train_circuits.py --dataset fmnist_4 --circs_dir ./quantumnas/searched_circuits/rxyz/revision/fmnist_4_24_ibmq_jakarta --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./quantumnas/searched_circuits/rxyz/revision/fmnist_4_24_ibmq_jakarta/with_quantumnat --use_quantumnat --num_circs 1
+
+python train_circuits.py --dataset fmnist_2 --circs_dir ./quantumnas/searched_circuits/rxyz/revision/fmnist_2_32_ibm_perth --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./quantumnas/searched_circuits/rxyz/revision/fmnist_2_32_ibm_perth/with_quantumnat --use_quantumnat --num_circs 1
+
+python train_circuits.py --dataset vowel_2 --circs_dir ./quantumnas/searched_circuits/rxyz/revision/vowel_2_32_ibm_nairobi --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./quantumnas/searched_circuits/rxyz/revision/vowel_2_32_ibm_nairobi/with_quantumnat --use_quantumnat --num_circs 1
+
+python train_circuits.py --dataset vowel_4 --circs_dir ./quantumnas/searched_circuits/rxyz/revision/vowel_4_40_ibmq_jakarta --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./quantumnas/searched_circuits/rxyz/revision/vowel_4_40_ibmq_jakarta/with_quantumnat --use_quantumnat --num_circs 1
+
+python train_circuits.py --dataset mnist_4 --circs_dir ./quantumnas/searched_circuits/rxyz/revision/mnist_4_40_ibm_lagos --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./quantumnas/searched_circuits/rxyz/revision/mnist_4_40_ibm_lagos/with_quantumnat --use_quantumnat --num_circs 1

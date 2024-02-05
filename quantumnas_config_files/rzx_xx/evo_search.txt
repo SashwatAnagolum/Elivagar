@@ -1,0 +1,33 @@
+python examples/run_es.py examples/configs/ours/es/manila/fmnist_2_32.yaml --run-dir=runs/super/ours.train_super.fmnist_2_32.yaml/
+
+python examples/run_es.py examples/configs/ours/es/manila/vowel_2_32.yaml --run-dir=runs/super/ours.train_super.vowel_2_32.yaml/
+
+python examples/run_es.py examples/configs/ours/es/manila/mnist_4_40.yaml --run-dir=runs/super/ours.train_super.mnist_4_40.yaml/
+
+python examples/run_es.py examples/configs/ours/es/manila/vowel_4_40.yaml --run-dir=runs/super/ours.train_super.vowel_4_40.yaml/
+
+python examples/run_es.py examples/configs/ours/es/quito/fmnist_2_32.yaml --run-dir=runs/super/ours.train_super.fmnist_2_32.yaml/
+
+python examples/run_es.py examples/configs/ours/es/quito/vowel_2_32.yaml --run-dir=runs/super/ours.train_super.vowel_2_32.yaml/
+
+python examples/run_es.py examples/configs/ours/es/quito/mnist_4_40.yaml --run-dir=runs/super/ours.train_super.mnist_4_40.yaml/
+
+python examples/run_es.py examples/configs/ours/es/quito/vowel_4_40.yaml --run-dir=runs/super/ours.train_super.vowel_4_40.yaml/
+
+
+
+python examples/run_es.py examples/configs/ours/rzx_xx/es/lucy/fmnist_2_32.yaml --run-dir=runs/rzx_xx/super/ours.train_super.fmnist_2_32.yaml/ --noise_model=./noise_models/oqc_lucy/noise_model.pkl
+
+python examples/run_es.py examples/configs/ours/rzx_xx/es/lucy/vowel_2_32.yaml --run-dir=runs/rzx_xx/super/ours.train_super.vowel_2_32.yaml/ --noise_model=./noise_models/oqc_lucy/noise_model.pkl
+
+python examples/run_es.py examples/configs/ours/rzx_xx/es/lucy/mnist_4_40.yaml --run-dir=runs/rzx_xx/super/ours.train_super.mnist_4_40.yaml/ --noise_model=./noise_models/oqc_lucy/noise_model.pkl
+
+python examples/run_es.py examples/configs/ours/rzx_xx/es/lucy/vowel_4_40.yaml --run-dir=runs/rzx_xx/super/ours.train_super.vowel_4_40.yaml/ --noise_model=./noise_models/oqc_lucy/noise_model.pkl
+
+python examples/run_es.py examples/configs/ours/rzx_xx/es/aspen_m2/moons_300_16.yaml --run-dir=runs/rzx_xx/super/ours.train_super.moons_300_16.yaml/ --noise_model=./noise_models/rigetti_aspen_m2/noise_model.pkl
+
+python examples/run_es.py examples/configs/ours/rzx_xx/es/aspen_m2/bank_20.yaml --run-dir=runs/rzx_xx/super/ours.train_super.bank_20.yaml/ --noise_model=./noise_models/rigetti_aspen_m2/noise_model.pkl
+
+python examples/run_es.py examples/configs/ours/rzx_xx/es/aspen_m2/mnist_2_20.yaml --run-dir=runs/rzx_xx/super/ours.train_super.mnist_2_20.yaml/ --noise_model=./noise_models/rigetti_aspen_m2/noise_model.pkl
+
+python examples/run_es.py examples/configs/ours/rzx_xx/es/aspen_m2/fmnist_4_24.yaml --run-dir=runs/rzx_xx/super/ours.train_super.fmnist_4_24.yaml/ --noise_model=./noise_models/rigetti_aspen_m2/noise_model.pkl

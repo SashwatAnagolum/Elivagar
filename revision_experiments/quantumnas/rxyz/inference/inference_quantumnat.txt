@@ -1,0 +1,15 @@
+python circuit_inference.py --dataset moons --num_circs 1 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_lagos --circs_dir ./quantumnas/searched_circuits/rxyz/revision/moons_16_ibm_lagos --num_test_samples 120 --results_save_dir with_quantumnat --transpiler_opt_level 1 --human_design --use_quantumnat --quantumnat_trained_dir with_quantumnat
+
+python circuit_inference.py --dataset bank --num_circs 1 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_perth --circs_dir ./quantumnas/searched_circuits/rxyz/revision/bank_20_ibm_perth --num_test_samples 122 --results_save_dir with_quantumnat --transpiler_opt_level 1 --human_design --use_quantumnat --quantumnat_trained_dir with_quantumnat
+
+python circuit_inference.py --dataset mnist_2 --num_circs 25 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_nairobi --circs_dir ./quantumnas/searched_circuits/rxyz/revision/mnist_2_20_ibm_nairobi --num_test_samples 400 --results_save_dir with_quantumnat --transpiler_opt_level 1 --human_design --use_quantumnat --quantumnat_trained_dir with_quantumnat
+
+python circuit_inference.py --dataset fmnist_4 --num_circs 25 --num_runs_per_circ 5 --encoding_type angle --device_name ibmq_jakarta --circs_dir ./quantumnas/searched_circuits/rxyz/revision/fmnist_4_24_ibmq_jakarta --num_test_samples 400 --results_save_dir with_quantumnat --transpiler_opt_level 1 --human_design --use_quantumnat --quantumnat_trained_dir with_quantumnat
+
+python circuit_inference.py --dataset fmnist_2 --num_circs 25 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_perth --circs_dir ./quantumnas/searched_circuits/rxyz/revision/fmnist_2_32_ibm_perth --num_test_samples 400 --results_save_dir with_quantumnat --transpiler_opt_level 1 --human_design --use_quantumnat --quantumnat_trained_dir with_quantumnat
+
+python circuit_inference.py --dataset vowel_2 --num_circs 25 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_nairobi --circs_dir ./quantumnas/searched_circuits/rxyz/revision/vowel_2_32_ibm_nairobi --num_test_samples 120 --results_save_dir with_quantumnat --transpiler_opt_level 1 --human_design --use_quantumnat --quantumnat_trained_dir with_quantumnat
+
+python circuit_inference.py --dataset vowel_4 --num_circs 25 --num_runs_per_circ 5 --encoding_type angle --device_name ibmq_jakarta --circs_dir ./quantumnas/searched_circuits/rxyz/revision/vowel_4_40_ibmq_jakarta --num_test_samples 120 --results_save_dir with_quantumnat --transpiler_opt_level 1 --human_design --use_quantumnat --quantumnat_trained_dir with_quantumnat
+
+python circuit_inference.py --dataset mnist_4 --num_circs 25 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_lagos --circs_dir ./quantumnas/searched_circuits/rxyz/revision/mnist_4_40_ibm_lagos --num_test_samples 400 --results_save_dir with_quantumnat --transpiler_opt_level 1 --human_design --use_quantumnat --quantumnat_trained_dir with_quantumnat

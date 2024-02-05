@@ -1,0 +1,15 @@
+python circuit_inference.py --dataset moons --num_circs 1 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_lagos --circs_dir ./human_design/angle_basic/moons/16_params --num_test_samples 120 --results_save_dir without_quantumnat --transpiler_opt_level 1 --human_design
+
+python circuit_inference.py --dataset bank --num_circs 1 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_perth --circs_dir ./human_design/angle_basic/bank/20_params --num_test_samples 122 --results_save_dir without_quantumnat --transpiler_opt_level 1  --human_design
+
+python circuit_inference.py --dataset mnist_2 --num_circs 1 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_nairobi --circs_dir ./human_design/angle_basic/mnist_2/20_params --num_test_samples 400 --results_save_dir without_quantumnat --transpiler_opt_level 1 --human_design
+
+python circuit_inference.py --dataset fmnist_4 --num_circs 1 --num_runs_per_circ 5 --encoding_type angle --device_name ibmq_jakarta --circs_dir ./human_design/angle_basic/fmnist_4/24_params --num_test_samples 400 --results_save_dir without_quantumnat --transpiler_opt_level 1 --human_design
+
+python circuit_inference.py --dataset fmnist_2 --num_circs 1 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_perth --circs_dir ./human_design/angle_basic/fmnist_2/32_params --num_test_samples 400 --results_save_dir without_quantumnat --transpiler_opt_level 1 --human_design
+
+python circuit_inference.py --dataset vowel_2 --num_circs 1 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_nairobi --circs_dir ./human_design/angle_basic/vowel_2/32_params --num_test_samples 120 --results_save_dir without_quantumnat --transpiler_opt_level 1 --human_design
+
+python circuit_inference.py --dataset vowel_4 --num_circs 1 --num_runs_per_circ 5 --encoding_type angle --device_name ibmq_jakarta --circs_dir ./human_design/angle_basic/vowel_4/40_params --num_test_samples 120 --results_save_dir without_quantumnat --transpiler_opt_level 1 --human_design
+
+python circuit_inference.py --dataset mnist_4 --num_circs 1 --num_runs_per_circ 5 --encoding_type angle --device_name ibm_lagos --circs_dir ./human_design/angle_basic/mnist_4/40_params --num_test_samples 400 --results_save_dir without_quantumnat --transpiler_opt_level 1 --human_design

@@ -1,0 +1,22 @@
+python train_elivagar_circuits.py --dataset bank --circs_dir ./ours/device_aware/ibm_kyoto/bank/20_params/ --device_name ibm_kyoto --encoding_type angle --noise_importance 0.5 --num_data_for_rep_cap 32 --num_params_for_rep_cap 32 --num_cdcs 32 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01
+
+python train_elivagar_circuits.py --dataset fmnist_2 --circs_dir ./ours/device_aware/ibm_kyoto/fmnist_2/32_params/ --device_name ibm_kyoto --encoding_type angle --noise_importance 0.5 --num_data_for_rep_cap 32 --num_params_for_rep_cap 32 --num_cdcs 32 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01
+
+python train_elivagar_circuits.py --dataset vowel_2 --circs_dir ./ours/device_aware/ibm_osaka/vowel_2/32_params/ --device_name ibm_osaka --encoding_type angle --noise_importance 0.5 --num_data_for_rep_cap 32 --num_params_for_rep_cap 32 --num_cdcs 32 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01
+
+python train_elivagar_circuits.py --dataset mnist_2 --circs_dir ./ours/device_aware/ibm_osaka/mnist_2/20_params/ --device_name ibm_osaka --encoding_type angle --noise_importance 0.5 --num_data_for_rep_cap 32 --num_params_for_rep_cap 32 --num_cdcs 32 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01
+
+
+
+
+
+
+python train_circuits.py --dataset bank --circs_dir ./ours/device_aware/ibm_kyoto/bank/20_params/search_100_ibm_kyoto --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./ours/device_aware/ibm_kyoto/bank/20_params/search_100_ibm_kyoto/{}/with_qtn_vqc_small --use_qtn_vqc --num_circs 25 --contains_multiple --circ_prefix trial --tt_input_size 2 2 2 --tt_ranks 1 1 1 1 --tt_output_size 2 2 2
+
+python train_circuits.py --dataset fmnist_2_fullsize --circs_dir ./ours/device_aware/ibm_kyoto/fmnist_2/32_params/search_100_ibm_kyoto --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./ours/device_aware/ibm_kyoto/fmnist_2/32_params/search_100_ibm_kyoto/{}/with_qtn_vqc_small --use_qtn_vqc --num_circs 25 --contains_multiple --circ_prefix trial --tt_input_size 7 16 7 --tt_ranks 1 1 1 1 --tt_output_size 2 2 4 --dataset_file_extension npy
+
+
+
+python train_circuits.py --dataset mnist_2_fullsize --circs_dir ./ours/device_aware/ibm_osaka/mnist_2/20_params/search_100_ibm_osaka --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./ours/device_aware/ibm_osaka/mnist_2/20_params/search_100_ibm_osaka/{}/with_qtn_vqc_small --use_qtn_vqc --num_circs 25 --contains_multiple --circ_prefix trial --tt_input_size 7 16 7 --tt_ranks 1 1 1 1 --tt_output_size 2 2 4 --dataset_file_extension npy
+
+python train_circuits.py --dataset vowel_2 --circs_dir ./ours/device_aware/ibm_osaka/vowel_2/32_params/search_100_ibm_osaka --num_epochs 200 --batch_size 256 --num_runs_per_circ 5 --encoding_type angle --learning_rate 0.01 --save_dir ./ours/device_aware/ibm_osaka/vowel_2/32_params/search_100_ibm_osaka/{}/with_qtn_vqc_small --use_qtn_vqc --num_circs 25 --contains_multiple --circ_prefix trial --tt_input_size 2 5 --tt_ranks 1 1 1 --tt_output_size 2 5

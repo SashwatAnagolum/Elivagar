@@ -1,0 +1,15 @@
+python train_elivagar_circuits.py --dataset moons --circs_dir ./ours/device_aware/ibm_lagos/moons/16_params/ --encoding_type angle --noise_importance 0.0 --num_data_for_rep_cap 32 --num_params_for_rep_cap 32 --num_cdcs 128 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01
+
+python train_elivagar_circuits.py --dataset bank --circs_dir ./ours/device_aware/ibm_perth/bank/20_params/ --encoding_type angle --noise_importance 0.0 --num_data_for_rep_cap 32 --num_params_for_rep_cap 32 --num_cdcs 128 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01
+
+python train_elivagar_circuits.py --dataset vowel_2 --circs_dir ./ours/device_aware/ibm_nairobi/vowel_2/32_params/ --encoding_type angle --noise_importance 0.0 --num_data_for_rep_cap 32 --num_params_for_rep_cap 32 --num_cdcs 128 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01
+
+python train_elivagar_circuits.py --dataset vowel_4 --circs_dir ./ours/device_aware/ibmq_jakarta/vowel_4/40_params/ --encoding_type angle --noise_importance 0.0 --num_data_for_rep_cap 64 --num_params_for_rep_cap 32 --num_cdcs 128 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01
+
+python train_elivagar_circuits.py --dataset mnist_4 --circs_dir ./ours/device_aware/ibm_lagos/mnist_4/40_params/ --encoding_type angle --noise_importance 0.0 --num_data_for_rep_cap 64 --num_params_for_rep_cap 32 --num_cdcs 128 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01
+
+python train_elivagar_circuits.py --dataset fmnist_4 --circs_dir ./ours/device_aware/ibmq_jakarta/fmnist_4/24_params/ --encoding_type angle --noise_importance 0.0 --num_data_for_rep_cap 64 --num_params_for_rep_cap 32 --num_cdcs 128 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01
+
+python train_elivagar_circuits.py --dataset mnist_2 --circs_dir ./ours/device_aware/ibm_nairobi/mnist_2/20_params/ --encoding_type angle --noise_importance 0.0 --num_data_for_rep_cap 32 --num_params_for_rep_cap 32 --num_cdcs 128 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01
+
+python train_elivagar_circuits.py --dataset fmnist_2 --circs_dir ./ours/device_aware/ibm_perth/fmnist_2/32_params/ --encoding_type angle --noise_importance 0.0 --num_data_for_rep_cap 32 --num_params_for_rep_cap 32 --num_cdcs 128 --num_circs 2500 --num_epochs 200 --batch_size 256 --learning_rate 0.01

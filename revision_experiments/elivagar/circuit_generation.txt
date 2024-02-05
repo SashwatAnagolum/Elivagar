@@ -1,0 +1,26 @@
+python generate_device_aware_circuits.py --target_dataset moons --num_circs 2500 --device_name ibm_lagos --save_dir ./ours/device_aware/ibm_lagos/moons/16_params/ --temp 0.5 --add_rotations
+python generate_device_aware_circuits.py --target_dataset mnist_4 --num_circs 2500 --device_name ibm_lagos --save_dir ./ours/device_aware/ibm_lagos/mnist_4/40_params/ --temp 0.5 --add_rotations
+
+python generate_device_aware_circuits.py --target_dataset bank --num_circs 2500 --device_name ibm_perth --save_dir ./ours/device_aware/ibm_perth/bank/20_params/ --temp 0.5 --add_rotations
+python generate_device_aware_circuits.py --target_dataset fmnist_2 --num_circs 2500 --device_name ibm_perth --save_dir ./ours/device_aware/ibm_perth/fmnist_2/32_params/ --temp 0.5 --add_rotations
+
+python generate_device_aware_circuits.py --target_dataset vowel_2 --num_circs 2500 --device_name ibm_nairobi --save_dir ./ours/device_aware/ibm_nairobi/vowel_2/32_params/ --temp 0.5 --add_rotations
+python generate_device_aware_circuits.py --target_dataset mnist_2 --num_circs 2500 --device_name ibm_nairobi --save_dir ./ours/device_aware/ibm_nairobi/mnist_2/20_params/ --temp 0.5 --add_rotations
+
+python generate_device_aware_circuits.py --target_dataset vowel_4 --num_circs 2500 --device_name ibmq_jakarta --save_dir ./ours/device_aware/ibmq_jakarta/vowel_4/40_params/ --temp 0.5 --add_rotations
+python generate_device_aware_circuits.py --target_dataset fmnist_4 --num_circs 2500 --device_name ibmq_jakarta --save_dir ./ours/device_aware/ibmq_jakarta/fmnist_4/24_params/ --temp 0.5 --add_rotations
+
+
+
+
+python generate_device_aware_circuits.py --target_dataset moons --num_circs 100 --device_name ibm_osaka --save_dir ./ours/device_aware/ibm_osaka/moons/16_params/ --temp 0.5 --add_rotations
+python generate_device_aware_circuits.py --target_dataset mnist_4 --num_circs 100 --device_name ibm_osaka --save_dir ./ours/device_aware/ibm_osaka/mnist_4/40_params/ --temp 0.5 --add_rotations
+
+python generate_device_aware_circuits.py --target_dataset bank --num_circs 100 --device_name ibm_osaka --save_dir ./ours/device_aware/ibm_osaka/bank/20_params/ --temp 0.5 --add_rotations
+python generate_device_aware_circuits.py --target_dataset fmnist_2 --num_circs 100 --device_name ibm_osaka --save_dir ./ours/device_aware/ibm_osaka/fmnist_2/32_params/ --temp 0.5 --add_rotations
+
+python generate_device_aware_circuits.py --target_dataset vowel_2 --num_circs 100 --device_name ibm_osaka --save_dir ./ours/device_aware/ibm_osaka/vowel_2/32_params/ --temp 0.5 --add_rotations
+python generate_device_aware_circuits.py --target_dataset mnist_2 --num_circs 100 --device_name ibm_osaka --save_dir ./ours/device_aware/ibm_osaka/mnist_2/20_params/ --temp 0.5 --add_rotations
+
+python generate_device_aware_circuits.py --target_dataset vowel_4 --num_circs 100 --device_name ibm_osaka --save_dir ./ours/device_aware/ibm_osaka/vowel_4/40_params/ --temp 0.5 --add_rotations
+python generate_device_aware_circuits.py --target_dataset fmnist_4 --num_circs 100 --device_name ibm_osaka --save_dir ./ours/device_aware/ibm_osaka/fmnist_4/24_params/ --temp 0.5 --add_rotations

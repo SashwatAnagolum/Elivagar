@@ -1,0 +1,9 @@
+python examples/train.py examples/configs/ours/rxyz/train_sub/kyoto/bank_20.yaml --ckpt-dir=es_runs/rxyz/revision/kyoto/ours.rxyz.es.kyoto.bank_20.yaml --save_dir=../searched_circuits/rxyz/revision/bank_20_kyoto
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/kyoto/fmnist_2_32.yaml --ckpt-dir=es_runs/rxyz/revision/kyoto/ours.rxyz.es.kyoto.fmnist_2_32.yaml --save_dir=../searched_circuits/rxyz/revision/fmnist_2_32_kyoto
+
+
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/osaka/vowel_2_32.yaml --ckpt-dir=es_runs/rxyz/revision/osaka/ours.rxyz.es.osaka.vowel_2_32.yaml --save_dir=../searched_circuits/rxyz/revision/vowel_2_32_osaka
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/osaka/mnist_2_20.yaml --ckpt-dir=es_runs/rxyz/revision/osaka/ours.rxyz.es.osaka.mnist_2_20.yaml --save_dir=../searched_circuits/rxyz/revision/mnist_2_20_osaka

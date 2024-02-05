@@ -1,0 +1,7 @@
+python examples/train.py examples/configs/ours/rxyz/train_sub/lima/moons_300_16.yaml --ckpt-dir=es_runs/rxyz/lima/ours.rxyz.es.lima.moons_300_16.yaml --save_dir=../searched_circuits/rxyz/moons_300_16_ibmq_lima
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/lima/bank_20.yaml --ckpt-dir=es_runs/rxyz/lima/ours.rxyz.es.lima.bank_20.yaml --save_dir=../searched_circuits/rxyz/bank_20_ibmq_lima
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/lima/mnist_2_20.yaml --ckpt-dir=es_runs/rxyz/lima/ours.rxyz.es.lima.mnist_2_20.yaml --save_dir=../searched_circuits/rxyz/mnist_2_20_ibmq_lima
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/lima/fmnist_4_24.yaml --ckpt-dir=es_runs/rxyz/lima/ours.rxyz.es.lima.fmnist_4_24.yaml --save_dir=../searched_circuits/rxyz/fmnist_4_24_ibmq_lima

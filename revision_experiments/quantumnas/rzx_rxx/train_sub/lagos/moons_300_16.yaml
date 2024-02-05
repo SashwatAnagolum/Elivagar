@@ -1,0 +1,103 @@
+dataset:
+  name: moons_300
+  root: 'examples/data/moons_300'
+  input_name: data
+  target_name: target
+
+model:
+  name: super_qfc0
+  transpile_before_run: False
+  load_op_list: False
+  arch:
+    n_wires: 2
+    n_meas_wires: 1
+    encoder_op_list_name: 2x2_ryz
+    n_layers_per_block: 2
+    q_layer_name: barren_s0
+    n_blocks: 8
+    n_front_share_blocks: 0
+    n_front_share_wires: 1
+    n_front_share_ops: 1
+  sampler:
+    strategy:
+      name: plain
+
+criterion:
+  name: mse_1_2
+
+optimizer:
+  name: sgd
+  lr: 5.0e-2
+  weight_decay: 0
+  nesterov: false
+  momentum: false
+
+scheduler:
+  name: constant
+
+trainer:
+  name: q_trainer
+  add_noise: False
+  act_quant: False
+  act_quant_skip_last_node: True
+  act_quant_loss: True
+  act_quant_loss_lambda: 10
+
+run:
+  n_warm_epochs: 0
+  n_epochs: 50
+  n_warm_epochs: 0
+  bsz: 32
+  workers_per_gpu: 2
+  device: cpu
+
+debug:
+  pdb: False
+  set_seed: False
+  seed: 42
+
+regularization:
+  unitary_loss: False
+  unitary_loss_lambda_trainable: False
+  unitary_loss_lambda: 0
+
+legalization:
+  legalize: False
+  epoch_interval: 9999999999
+  step_interval: 9999999999
+
+callbacks:
+  - callback: 'Saver'
+    max_to_keep: 50
+
+qiskit:
+  use_qiskit: False
+  use_real_qc: False
+  backend_name: ibm_lagos
+  noise_model_name: ibm_lagos
+  basis_gates_name: null
+  n_shots: 8192
+  initial_layout: null
+  seed_transpiler: 42
+  seed_simulator: 42
+  optimization_level: 0
+  est_success_rate: False
+  max_jobs: 1
+
+es:
+  est_success_rate: False
+
+ckpt:
+  load_ckpt: True
+  load_trainer: False
+  name: 'checkpoints/best_solution.pt'
+  weight_from_scratch: True
+
+verbose: False
+
+get_n_params: False
+
+prune:
+  eval:
+    remove_ops: False
+    remove_ops_thres: null

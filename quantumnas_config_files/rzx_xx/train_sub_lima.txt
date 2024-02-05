@@ -1,0 +1,35 @@
+python examples/train.py examples/configs/ours/train_sub/lima/moons_300_2.yaml --ckpt-dir=es_runs/lima/ours.es.lima.moons_300_2.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/moons_300_4.yaml --ckpt-dir=es_runs/lima/ours.es.lima.moons_300_4.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/moons_300_6.yaml --ckpt-dir=es_runs/lima/ours.es.lima.moons_300_6.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/moons_300_8.yaml --ckpt-dir=es_runs/lima/ours.es.lima.moons_300_8.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/moons_300_10.yaml --ckpt-dir=es_runs/lima/ours.es.lima.moons_300_10.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/moons_300_12.yaml --ckpt-dir=es_runs/lima/ours.es.lima.moons_300_12.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/moons_300_14.yaml --ckpt-dir=es_runs/lima/ours.es.lima.moons_300_14.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/moons_300_16.yaml --ckpt-dir=es_runs/lima/ours.es.lima.moons_300_16.yaml
+
+python examples/train.py examples/configs/ours/train_sub/lima/bank_4.yaml --ckpt-dir=es_runs/lima/ours.es.lima.bank_4.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/bank_8.yaml --ckpt-dir=es_runs/lima/ours.es.lima.bank_8.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/bank_12.yaml --ckpt-dir=es_runs/lima/ours.es.lima.bank_12.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/bank_16.yaml --ckpt-dir=es_runs/lima/ours.es.lima.bank_16.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/bank_20.yaml --ckpt-dir=es_runs/lima/ours.es.lima.bank_20.yaml
+
+python examples/train.py examples/configs/ours/train_sub/lima/mnist_2_4.yaml --ckpt-dir=es_runs/lima/ours.es.lima.mnist_2_4.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/mnist_2_8.yaml --ckpt-dir=es_runs/lima/ours.es.lima.mnist_2_8.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/mnist_2_12.yaml --ckpt-dir=es_runs/lima/ours.es.lima.mnist_2_12.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/mnist_2_16.yaml --ckpt-dir=es_runs/lima/ours.es.lima.mnist_2_16.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/mnist_2_20.yaml --ckpt-dir=es_runs/lima/ours.es.lima.mnist_2_20.yaml
+
+python examples/train.py examples/configs/ours/train_sub/lima/fmnist_4_12.yaml --ckpt-dir=es_runs/lima/ours.es.lima.fmnist_4_12.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/fmnist_4_16.yaml --ckpt-dir=es_runs/lima/ours.es.lima.fmnist_4_16.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/fmnist_4_20.yaml --ckpt-dir=es_runs/lima/ours.es.lima.fmnist_4_20.yaml
+python examples/train.py examples/configs/ours/train_sub/lima/fmnist_4_24.yaml --ckpt-dir=es_runs/lima/ours.es.lima.fmnist_4_24.yaml
+
+
+
+python examples/train.py examples/configs/ours/rzx_xx/train_sub/lima/moons_300_16.yaml --ckpt-dir=es_runs/rzx_xx/lima/ours.es.lima.moons_300_16.yaml --save_dir=../searched_circuits/rzx_xx/moons_300_16_ibmq_lima
+
+python examples/train.py examples/configs/ours/rzx_xx/train_sub/lima/bank_20.yaml --ckpt-dir=es_runs/rzx_xx/lima/ours.es.lima.bank_20.yaml --save_dir=../searched_circuits/rzx_xx/bank_20_ibmq_lima
+
+python examples/train.py examples/configs/ours/rzx_xx/train_sub/lima/mnist_2_20.yaml --ckpt-dir=es_runs/rzx_xx/lima/ours.es.lima.mnist_2_20.yaml --save_dir=../searched_circuits/rzx_xx/mnist_2_20_ibmq_lima
+
+python examples/train.py examples/configs/ours/rzx_xx/train_sub/lima/fmnist_4_24.yaml --ckpt-dir=es_runs/rzx_xx/lima/ours.es.lima.fmnist_4_24.yaml --save_dir=../searched_circuits/rzx_xx/fmnist_4_24_ibmq_lima

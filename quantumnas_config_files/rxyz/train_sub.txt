@@ -1,0 +1,16 @@
+python examples/train.py examples/configs/ours/rxyz/train_sub/lucy/fmnist_2_32.yaml --ckpt-dir=es_runs/rxyz/lucy/ours.rxyz.es.lucy.fmnist_2_32.yaml --save_dir=../searched_circuits/rxyz/fmnist_2_32_oqc_lucy
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/lucy/vowel_2_32.yaml --ckpt-dir=es_runs/rxyz/lucy/ours.rxyz.es.lucy.vowel_2_32.yaml --save_dir=../searched_circuits/rxyz/vowel_2_32_oqc_lucy
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/lucy/mnist_4_40.yaml --ckpt-dir=es_runs/rxyz/lucy/ours.rxyz.es.lucy.mnist_4_40.yaml --save_dir=../searched_circuits/rxyz/mnist_4_40_oqc_lucy
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/lucy/vowel_4_40.yaml --ckpt-dir=es_runs/rxyz/lucy/ours.rxyz.es.lucy.vowel_4_40.yaml --save_dir=../searched_circuits/rxyz/vowel_4_40_oqc_lucy
+
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/aspen_m2/moons_300_16.yaml --ckpt-dir=es_runs/rxyz/aspen_m2/ours.rxyz.es.aspen_m2.moons_300_16.yaml --save_dir=../searched_circuits/rxyz/moons_300_16_rigetti_aspen_m2
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/aspen_m2/bank_20.yaml --ckpt-dir=es_runs/rxyz/aspen_m2/ours.rxyz.es.aspen_m2.bank_20.yaml --save_dir=../searched_circuits/rxyz/bank_20_rigetti_aspen_m2
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/aspen_m2/mnist_2_20.yaml --ckpt-dir=es_runs/rxyz/aspen_m2/ours.rxyz.es.aspen_m2.mnist_2_20.yaml --save_dir=../searched_circuits/rxyz/mnist_2_20_rigetti_aspen_m2
+
+python examples/train.py examples/configs/ours/rxyz/train_sub/aspen_m2/fmnist_4_24.yaml --ckpt-dir=es_runs/rxyz/aspen_m2/ours.rxyz.es.aspen_m2.fmnist_4_24.yaml --save_dir=../searched_circuits/rxyz/fmnist_4_24_rigetti_aspen_m2

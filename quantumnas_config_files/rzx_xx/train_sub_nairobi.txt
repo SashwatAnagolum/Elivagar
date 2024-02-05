@@ -1,0 +1,35 @@
+python examples/train.py examples/configs/ours/train_sub/nairobi/moons_300_2.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.moons_300_2.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/moons_300_4.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.moons_300_4.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/moons_300_6.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.moons_300_6.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/moons_300_8.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.moons_300_8.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/moons_300_10.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.moons_300_10.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/moons_300_12.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.moons_300_12.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/moons_300_14.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.moons_300_14.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/fmnist_2_32.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.fmnist_2_32.yaml
+
+python examples/train.py examples/configs/ours/train_sub/nairobi/bank_4.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.bank_4.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/bank_8.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.bank_8.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/bank_12.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.bank_12.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/bank_16.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.bank_16.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/vowel_2_32.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.vowel_2_32.yaml
+
+python examples/train.py examples/configs/ours/train_sub/nairobi/mnist_2_4.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.mnist_2_4.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/mnist_2_8.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.mnist_2_8.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/mnist_2_12.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.mnist_2_12.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/mnist_2_16.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.mnist_2_16.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/mnist_4_40.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.mnist_4_40.yaml
+
+python examples/train.py examples/configs/ours/train_sub/nairobi/fmnist_4_12.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.fmnist_4_12.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/fmnist_4_16.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.fmnist_4_16.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/fmnist_4_20.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.fmnist_4_20.yaml
+python examples/train.py examples/configs/ours/train_sub/nairobi/vowel_4_40.yaml --ckpt-dir=es_runs/nairobi/ours.es.nairobi.vowel_4_40.yaml
+
+
+
+python examples/train.py examples/configs/ours/rzx_xx/train_sub/nairobi/moons_300_16.yaml --ckpt-dir=es_runs/rzx_xx/nairobi/ours.es.nairobi.moons_300_16.yaml --save_dir=../searched_circuits/rzx_xx/moons_300_16_ibm_nairobi
+
+python examples/train.py examples/configs/ours/rzx_xx/train_sub/nairobi/bank_20.yaml --ckpt-dir=es_runs/rzx_xx/nairobi/ours.es.nairobi.bank_20.yaml --save_dir=../searched_circuits/rzx_xx/bank_20_ibm_nairobi
+
+python examples/train.py examples/configs/ours/rzx_xx/train_sub/nairobi/mnist_2_20.yaml --ckpt-dir=es_runs/rzx_xx/nairobi/ours.es.nairobi.mnist_2_20.yaml --save_dir=../searched_circuits/rzx_xx/mnist_2_20_ibm_nairobi
+
+python examples/train.py examples/configs/ours/rzx_xx/train_sub/nairobi/fmnist_4_24.yaml --ckpt-dir=es_runs/rzx_xx/nairobi/ours.es.nairobi.fmnist_4_24.yaml --save_dir=../searched_circuits/rzx_xx/fmnist_4_24_ibm_nairobi
