@@ -10,15 +10,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', default=None, help='which dataset to train the circuits on')
     parser.add_argument('--num_qubits', type=int, default=None, help='number of qubits used by the generated circuits')
-    parser.add_argument('--num_meas_qubits', type=int, default=None,
-                        help='number of qubits to measure in each circuit')
-
+    parser.add_argument('--num_meas_qubits', type=int, default=None, help='number of qubits to measure in each circuit')
     parser.add_argument('--num_circs', type=int, default=2500, help='number of circuits to perform inference for')
     parser.add_argument('--encoding_type', default=None, help='the encoding type to use for the data')
     parser.add_argument('--num_data_reps', type=int, default=None, help='the number of times to re-encode the data')
     parser.add_argument('--circ_prefix', default='circ', help='the common prefix for all the circuit folder names')
     parser.add_argument('--circs_dir', default='./', help='the folder where all the circuits are stored')
     parser.add_argument('--save_matrices', action='store_true', help='whether to save matrices or not')
+    parser.add_argument('--dataset_file_extension', default='txt', type=str, help='extension for the dataset files')
     parser.add_argument('--num_param_samples', type=int, default=32,
                         help='number of parameter vectors to average over')
 
@@ -40,15 +39,16 @@ def main():
         
     if args.num_meas_qubits is None:
         args.num_meas_qubits = curr_dataset_hyperparams['num_meas_qubits']   
-        
-    meas_qubits = [i for i in range(args.num_meas_qubits)]
+
     num_classes = curr_dataset_hyperparams['num_classes']
     
     compute_rep_cap_for_circuits(args.circs_dir, args.num_circs, args.circ_prefix, args.num_qubits, 
                                  args.num_meas_qubits, args.dataset, num_classes,
                                  args.num_samples_per_class,
                                  args.num_param_samples, args.encoding_type, 
-                                 args.num_data_reps, args.save_matrices)
+                                 args.num_data_reps, args.save_matrices,
+                                 args.dataset_file_extension
+                                )
     
 if __name__ == '__main__':
     main()

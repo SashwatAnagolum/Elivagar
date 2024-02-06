@@ -70,3 +70,5 @@ Finally, we can evaluate the trained circuits on a withheld test set from the Mo
 ```
 ./scripts/moons/16_params/elivagar/eval_osaka.sh
 ```
+
+Similarly, we can run 

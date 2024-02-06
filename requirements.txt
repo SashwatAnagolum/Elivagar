@@ -24,7 +24,7 @@ colorama==0.4.4
 commonmark==0.9.1
 contextlib2==21.6.0
 decorator==5.1.1
-dgl==0.9.1.post1
+dgl==0.9.1
 dill==0.3.4
 dm-tree==0.1.8
 docutils==0.16
