@@ -23,17 +23,10 @@ Install all of the required packages via pip:
 pip install -r requirements.txt
 ```
 
-Now, clone the following repositories to enable support for QTN-VQC:
+Now, install the Pytorch-Tensor-Train-Network package:
 
 ```
-git clone https://github.com/uwjunqi/PreTrained-TTN_VQC
-git clone https://github.com/uwjunqi/Pytorch-Tensor-Train-Network.git
-```
-
-Install the Pytorch-Tensor-Train-Network package:
-
-```
-cd Pytorch-Tensor-Train-Network
+cd qtn_vqc/Pytorch-Tensor-Train-Network
 python setup.py install
 ```
 

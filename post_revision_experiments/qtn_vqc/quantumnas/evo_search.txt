@@ -1,9 +1,0 @@
-python examples/run_es.py examples/configs/ours/rxyz/es/kyoto/bank_20.yaml --run-dir=runs/rxyz/super/revision/ours.rxyz.train_super.bank_20.yaml/
-
-python examples/run_es.py examples/configs/ours/rxyz/es/kyoto/fmnist_2_32.yaml --run-dir=runs/rxyz/super/revision/ours.rxyz.train_super.fmnist_2_32.yaml/
-
-
-
-python examples/run_es.py examples/configs/ours/rxyz/es/osaka/vowel_2_32.yaml --run-dir=runs/rxyz/super/revision/ours.rxyz.train_super.vowel_2_32.yaml/
-
-python examples/run_es.py examples/configs/ours/rxyz/es/osaka/mnist_2_20.yaml --run-dir=runs/rxyz/super/revision/ours.rxyz.train_super.mnist_2_20.yaml/

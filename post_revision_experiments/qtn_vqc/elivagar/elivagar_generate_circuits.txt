@@ -1,9 +1,0 @@
-python generate_device_aware_circuits.py --target_dataset bank --num_circs 2500 --device_name ibm_kyoto --save_dir ./ours/device_aware/ibm_kyoto/bank/20_params/ --temp 0.5 --add_rotations
-
-python generate_device_aware_circuits.py --target_dataset fmnist_2 --num_circs 2500 --device_name ibm_kyoto --save_dir ./ours/device_aware/ibm_kyoto/fmnist_2/32_params/ --temp 0.5 --add_rotations
-
-
-
-python generate_device_aware_circuits.py --target_dataset vowel_2 --num_circs 2500 --device_name ibm_osaka --save_dir ./ours/device_aware/ibm_osaka/vowel_2/32_params/ --temp 0.5 --add_rotations
-
-python generate_device_aware_circuits.py --target_dataset mnist_2 --num_circs 2500 --device_name ibm_osaka --save_dir ./ours/device_aware/ibm_osaka/mnist_2/20_params/ --temp 0.5 --add_rotations

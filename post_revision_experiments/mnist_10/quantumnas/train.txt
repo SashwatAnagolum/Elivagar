@@ -1,1 +1,0 @@
-python examples/train.py examples/configs/ours/rxyz/train_super/mnist_10_72.yaml

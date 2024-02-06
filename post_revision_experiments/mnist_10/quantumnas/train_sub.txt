@@ -1,3 +1,0 @@
-python examples/train.py examples/configs/ours/rxyz/train_sub/kyoto/mnist_10_72.yaml --ckpt-dir=es_runs/rxyz/revision/kyoto/ours.rxyz.es.kyoto.mnist_10_72.yaml --save_dir=../searched_circuits/rxyz/revision/mnist_10_72_kyoto
-
-python examples/train.py examples/configs/ours/rxyz/train_sub/osaka/mnist_10_72.yaml --ckpt-dir=es_runs/rxyz/revision/osaka/ours.rxyz.es.osaka.mnist_10_72.yaml --save_dir=../searched_circuits/rxyz/revision/mnist_10_72_osaka

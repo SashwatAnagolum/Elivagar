@@ -1,6 +1,0 @@
-bash ./scripts/training/random/rxyz_cz_angle_1.sh
-bash ./scripts/training/random/rxyz_cz_iqp_1.sh
-bash ./scripts/training/random/rxyz_cz_amp_1.sh
-bash ./scripts/training/random/rxyz_cz_angle_2.sh
-bash ./scripts/training/random/rxyz_cz_iqp_2.sh
-bash ./scripts/training/random/rxyz_cz_amp_2.sh

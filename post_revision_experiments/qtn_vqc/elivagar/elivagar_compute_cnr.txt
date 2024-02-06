@@ -1,7 +1,0 @@
-python compute_clifford_nr.py --dataset bank --num_circs 2500 --num_cdcs 32 --device_name ibm_kyoto --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/ibm_kyoto/bank/20_params/
-
-python compute_clifford_nr.py --dataset fmnist_2 --num_circs 2500 --num_cdcs 32 --device_name ibm_kyoto --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/ibm_kyoto/fmnist_2/32_params/
- 
-python compute_clifford_nr.py --dataset vowel_2 --num_circs 2500 --num_cdcs 32 --device_name ibm_osaka --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/ibm_osaka/vowel_2/32_params/
-
-python compute_clifford_nr.py --dataset mnist_2 --num_circs 2500 --num_cdcs 32 --device_name ibm_osaka --use_qubit_mapping --save_cnr_scores --encoding_type angle --circs_dir ./ours/device_aware/ibm_osaka/mnist_2/20_params/

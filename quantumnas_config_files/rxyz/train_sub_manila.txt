@@ -1,7 +1,0 @@
-python examples/train.py examples/configs/ours/rxyz/train_sub/manila/fmnist_2_32.yaml --ckpt-dir=es_runs/rxyz/manila/ours.rxyz.es.manila.fmnist_2_32.yaml --save_dir=../searched_circuits/rxyz/fmnist_2_32_ibmq_manila
-
-python examples/train.py examples/configs/ours/rxyz/train_sub/manila/vowel_2_32.yaml --ckpt-dir=es_runs/rxyz/manila/ours.rxyz.es.manila.vowel_2_32.yaml --save_dir=../searched_circuits/rxyz/vowel_2_32_ibmq_manila
-
-python examples/train.py examples/configs/ours/rxyz/train_sub/manila/mnist_4_40.yaml --ckpt-dir=es_runs/rxyz/manila/ours.rxyz.es.manila.mnist_4_40.yaml --save_dir=../searched_circuits/rxyz/mnist_4_40_ibmq_manila
-
-python examples/train.py examples/configs/ours/rxyz/train_sub/manila/vowel_4_40.yaml --ckpt-dir=es_runs/rxyz/manila/ours.rxyz.es.manila.vowel_4_40.yaml --save_dir=../searched_circuits/rxyz/vowel_4_40_ibmq_manila

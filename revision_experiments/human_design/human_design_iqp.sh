@@ -1,9 +1,0 @@
-#!/bin/bash
-python train_human_designed.py --dataset moons --num_epochs 200 --batch_size 256 --learning_rate 0.01 --num_runs_per_circ 5 --encoding_type iqp --save_dir ./human_design/iqp_basic/moons/16_params/
-python train_human_designed.py --dataset bank --num_epochs 200 --batch_size 256 --learning_rate 0.01 --num_runs_per_circ 5 --encoding_type iqp --save_dir ./human_design/iqp_basic/bank/20_params/
-python train_human_designed.py --dataset mnist_2 --num_epochs 200 --batch_size 256 --learning_rate 0.01 --num_runs_per_circ 5 --encoding_type iqp --save_dir ./human_design/iqp_basic/mnist_2/20_params/
-python train_human_designed.py --dataset fmnist_4 --num_epochs 200 --batch_size 256 --learning_rate 0.01 --num_runs_per_circ 5 --encoding_type iqp --save_dir ./human_design/iqp_basic/fmnist_4/24_params/
-python train_human_designed.py --dataset fmnist_2 --num_epochs 200 --batch_size 256 --learning_rate 0.01 --num_runs_per_circ 5 --encoding_type iqp --save_dir ./human_design/iqp_basic/fmnist_2/32_params/
-python train_human_designed.py --dataset vowel_2 --num_epochs 200 --batch_size 256 --learning_rate 0.01 --num_runs_per_circ 5 --encoding_type iqp --save_dir ./human_design/iqp_basic/vowel_2/32_params/
-python train_human_designed.py --dataset vowel_4 --num_epochs 200 --batch_size 256 --learning_rate 0.01 --num_runs_per_circ 5 --encoding_type iqp --save_dir ./human_design/iqp_basic/vowel_4/40_params/
-python train_human_designed.py --dataset mnist_4 --num_epochs 200 --batch_size 256 --learning_rate 0.01 --num_runs_per_circ 5 --encoding_type iqp --save_dir ./human_design/iqp_basic/mnist_4/40_params/

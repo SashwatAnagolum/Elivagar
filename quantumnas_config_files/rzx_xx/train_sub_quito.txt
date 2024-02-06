@@ -1,7 +1,0 @@
-python examples/train.py examples/configs/ours/rzx_xx/train_sub/quito/fmnist_2_32.yaml --ckpt-dir=es_runs/rzx_xx/quito/ours.es.quito.fmnist_2_32.yaml --save_dir=../searched_circuits/rzx_xx/fmnist_2_32_ibmq_quito
-
-python examples/train.py examples/configs/ours/rzx_xx/train_sub/quito/vowel_2_32.yaml --ckpt-dir=es_runs/rzx_xx/quito/ours.es.quito.vowel_2_32.yaml --save_dir=../searched_circuits/rzx_xx/vowel_2_32_ibmq_quito
-
-python examples/train.py examples/configs/ours/rzx_xx/train_sub/quito/mnist_4_40.yaml --ckpt-dir=es_runs/rzx_xx/quito/ours.es.quito.mnist_4_40.yaml --save_dir=../searched_circuits/rzx_xx/mnist_4_40_ibmq_quito
-
-python examples/train.py examples/configs/ours/rzx_xx/train_sub/quito/vowel_4_40.yaml --ckpt-dir=es_runs/rzx_xx/quito/ours.es.quito.vowel_4_40.yaml --save_dir=../searched_circuits/rzx_xx/vowel_4_40_ibmq_quito

@@ -1,7 +1,0 @@
-python examples/train.py examples/configs/ours/rxyz/train_sub/nairobi/moons_300_16.yaml --ckpt-dir=es_runs/rxyz/nairobi/ours.rxyz.es.nairobi.moons_300_16.yaml --save_dir=../searched_circuits/rxyz/moons_300_16_ibm_nairobi
-
-python examples/train.py examples/configs/ours/rxyz/train_sub/nairobi/bank_20.yaml --ckpt-dir=es_runs/rxyz/nairobi/ours.rxyz.es.nairobi.bank_20.yaml --save_dir=../searched_circuits/rxyz/bank_20_ibm_nairobi
-
-python examples/train.py examples/configs/ours/rxyz/train_sub/nairobi/mnist_2_20.yaml --ckpt-dir=es_runs/rxyz/nairobi/ours.rxyz.es.nairobi.mnist_2_20.yaml --save_dir=../searched_circuits/rxyz/mnist_2_20_ibm_nairobi
-
-python examples/train.py examples/configs/ours/rxyz/train_sub/nairobi/fmnist_4_24.yaml --ckpt-dir=es_runs/rxyz/nairobi/ours.rxyz.es.nairobi.fmnist_4_24.yaml --save_dir=../searched_circuits/rxyz/fmnist_4_24_ibm_nairobi

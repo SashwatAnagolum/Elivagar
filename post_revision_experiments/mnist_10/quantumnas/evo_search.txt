@@ -1,3 +1,0 @@
-python examples/run_es.py examples/configs/ours/rxyz/es/kyoto/mnist_10_72.yaml --run-dir=runs/rxyz/super/revision/ours.rxyz.train_super.mnist_10_72.yaml/
-
-python examples/run_es.py examples/configs/ours/rxyz/es/osaka/mnist_10_72.yaml --run-dir=runs/rxyz/super/revision/ours.rxyz.train_super.mnist_10_72.yaml/
