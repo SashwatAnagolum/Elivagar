@@ -37,31 +37,31 @@ Setup should now be complete.
 As an example, we can use Élivágar to search for a circuit for the Moons dataset, targeting the IBM-Osaka device. To do so, we first generate candidate circuits for the target dataset-device combination:
 
 ```
-./scripts/moons/16_params/elivagar/circ_gen_osaka.sh
+./scripts/moons/elivagar/circ_gen_osaka.sh
 ```
 
 Next, we compute the Clifford Noise Resilience (CNR) of each of the generated candidate circuits to estimate circuit noise robustness:
 
 ```
-./scripts/moons/16_params/elivagar/cnr_osaka.sh
+./scripts/moons/elivagar/cnr_osaka.sh
 ```
 
 We then compute the representation capacity (RepCap) of candidate circuits, to estimate circuit performance:
 
 ```
-./scripts/moons/16_params/elivagar/repcap_osaka.sh
+./scripts/moons/elivagar/repcap_osaka.sh
 ```
 
 Next, we can compute composite scores using the CNR and RepCap scores for each circuit, select the circuits to be trained, and train them on the Moons dataset:
 
 ```
-./scripts/moons/16_params/elivagar/train_osaka.sh
+./scripts/moons/elivagar/train_osaka.sh
 ```
 
 Finally, we can evaluate the trained circuits on a withheld test set from the Moons dataset to check circuit performance:
 
 ```
-./scripts/moons/16_params/elivagar/eval_osaka.sh
+./scripts/moons/elivagar/eval_osaka.sh
 ```
 
 Similarly, we can run 
