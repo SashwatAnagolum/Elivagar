@@ -52,12 +52,6 @@ def compute_noise_metric(circ_gates, gate_params, inputs_bounds, weights_bounds,
                 transpile_circ=True, basis_gates=basis_gates,
                 coupling_map=coupling_map, qubit_mapping=qubit_mapping
             )
-            
-#             circ_noisy_dist[i] = run_qiskit_circ(
-#                 circ, noisy_dev, num_qubits, num_shots, mode='probs',
-#                 transpile_circ=False, basis_gates=basis_gates,
-#                 coupling_map=coupling_map, qubit_mapping=qubit_mapping
-#             )
     else:
         for i in range(num_cdcs):
             noiseless_circ = create_gate_circ(noiseless_dev, *circ_list[i], meas_qubits, 'probs')
@@ -90,8 +84,6 @@ def compute_clifford_nr_for_circuit(circ_dir, noisy_dev, noiseless_dev, device_n
     if index_mapping:
         qubit_mapping = [index_mapping[i] for i in qubit_mapping]
     
-    print(qubit_mapping)
-    
     noise_metric_dir = os.path.join(circ_dir, f'cnr_{num_cdcs}')        
 
     if not os.path.exists(noise_metric_dir):
@@ -108,8 +100,6 @@ def compute_clifford_nr_for_circuit(circ_dir, noisy_dev, noiseless_dev, device_n
         num_shots=num_shots, qiskit=use_qiskit, coupling_map=coupling_map,
         basis_gates=basis_gates,
     )
-    
-    print(clifford_fid)
     
     np.savetxt(device_noise_metric_dir + '/cnr.txt', [clifford_fid])
     

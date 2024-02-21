@@ -1,6 +1,7 @@
 import qiskit
 import pennylane as qml
 import pickle as pkl
+import os
 import qiskit.providers.aer.noise as noise
 
 from qiskit import IBMQ
@@ -162,7 +163,7 @@ def get_noise_model(device_name):
     noise_model = noise.NoiseModel.from_backend(backend)
     config = backend.configuration().to_dict()
     
-    device_properties_filepath = f'./device_properties/ibm'
+    device_properties_folder = f'./device_properties/ibm'
     
     if not os.path.exists(device_properties_folder):
         os.makedirs(device_properties_folder)
