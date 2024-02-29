@@ -81,7 +81,7 @@ def main():
         args.pick_best, args.use_quantumnat, args.quantumnat_trained_dir
     )    
     
-    print('TIme taken for', args.dataset, time.time() - start)
+    print('Time taken for', args.dataset, time.time() - start)
     
 if __name__ == '__main__':
     main()

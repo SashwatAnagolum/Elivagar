@@ -13,7 +13,8 @@ from elivagar.circuits.device_aware import (
 )
 
 
-def convert_braket_properties_to_qiskit_noise_model(device_properties_path, symmetric=False):
+def convert_braket_properties_to_qiskit_noise_model(device_properties_path, symmetric=False,
+                                                    device_properties=None):
     """
     Use a braket device properties file to get information for a Qiskit backend noise model.
     """
@@ -41,7 +42,10 @@ def convert_braket_properties_to_qiskit_noise_model(device_properties_path, symm
     
     noise_model = noise.NoiseModel()
     
-    dev_properties = pkl.load(open(device_properties_path, 'rb'))
+    if device_properties is None:
+        dev_properties = pkl.load(open(device_properties_path, 'rb'))
+    else:
+        dev_properties = device_properties
     
     (
         num_device_qubits, connectivity, t1_times,

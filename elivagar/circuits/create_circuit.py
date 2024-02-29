@@ -11,6 +11,7 @@ from qiskit.circuit.library import XXPlusYYGate
 from torchquantum.functional import gate_wrapper
 from torchquantum.operators import Operation
 from tc.tc_fc import TTLinear
+from braket.circuits import Circuit
 
 def ecr_matrix(params):
     imag = 1j

@@ -3,12 +3,15 @@ import os
 import pennylane as qml
 
 from qiskit.providers.aer import AerSimulator
+from braket.devices import LocalSimulator 
 
+from elivagar.utils.braket_devices import get_braket_device
 from elivagar.utils.create_noise_models import get_real_backend_dev, noisy_dev_from_backend, get_noise_model
-from elivagar.circuits.create_circuit import create_gate_circ, create_qiskit_circ
+from elivagar.circuits.create_circuit import create_gate_circ, create_qiskit_circ, create_braket_gate_circ
 from elivagar.circuits.arbitrary import get_circ_params
 from elivagar.utils.datasets import load_dataset
 from elivagar.inference.noise_model import run_qiskit_circ
+from elivagar.circuits.run_circuit import run_braket_circuit
 
 
 def convert_to_cdc(circ_gates, gate_params, inputs_bounds, weights_bounds):
@@ -29,7 +32,8 @@ def convert_to_cdc(circ_gates, gate_params, inputs_bounds, weights_bounds):
 
 
 def compute_noise_metric(circ_gates, gate_params, inputs_bounds, weights_bounds, num_qubits, noiseless_dev, noisy_dev,
-                         qubit_mapping, num_cdcs=32, num_shots=1024, qiskit=False, coupling_map=None, basis_gates=None):
+                         qubit_mapping, num_cdcs=32, num_shots=1024, qiskit=False, coupling_map=None, basis_gates=None,
+                         use_real_backend=False):
     """
     Compute the Clifford noise resilience for a circuit.
     """
@@ -53,15 +57,30 @@ def compute_noise_metric(circ_gates, gate_params, inputs_bounds, weights_bounds,
                 coupling_map=coupling_map, qubit_mapping=qubit_mapping
             )
     else:
-        for i in range(num_cdcs):
-            noiseless_circ = create_gate_circ(noiseless_dev, *circ_list[i], meas_qubits, 'probs')
-            noisy_circ = create_gate_circ(noisy_dev, *circ_list[i], meas_qubits, 'probs')
+        if use_real_backend:
+            for i in range(num_cdcs):
+                noiseless_results = run_braket_circuit(
+                    *circ_list[i], qubit_mapping, [], [],
+                    noiseless_dev, num_shots, False, False, True
+                )
 
-            noiseless_results = noiseless_circ([], [], shots=num_shots)
-            noisy_results = noisy_circ([], [], shots=num_shots)
+                noisy_results = run_braket_circuit(
+                    *circ_list[i], qubit_mapping, [], [],
+                    noisy_dev, num_shots, False, False, True
+                )
 
-            circ_noisy_dist[i] = noisy_results
-            circ_noiseless_dist[i] = noiseless_results
+                circ_noisy_dist[i] = noisy_results
+                circ_noiseless_dist[i] = noiseless_results
+        else:
+            for i in range(num_cdcs):
+                noiseless_circ = create_gate_circ(noiseless_dev, *circ_list[i], meas_qubits, 'probs')
+                noisy_circ = create_gate_circ(noisy_dev, *circ_list[i], meas_qubits, 'probs')
+
+                noiseless_results = noiseless_circ([], [], shots=num_shots)
+                noisy_results = noisy_circ([], [], shots=num_shots)
+
+                circ_noisy_dist[i] = noisy_results
+                circ_noiseless_dist[i] = noiseless_results
                 
     tvds = 0.5 * np.sum(np.abs(circ_noiseless_dist - circ_noisy_dist), 1)
         
@@ -69,7 +88,7 @@ def compute_noise_metric(circ_gates, gate_params, inputs_bounds, weights_bounds,
 
 
 def compute_clifford_nr_for_circuit(circ_dir, noisy_dev, noiseless_dev, device_name, num_qubits, num_cdcs, num_shots, compute_actual_fidelity=False, num_trial_params=128,
-                                    x_train=None, use_qiskit=False, basis_gates=None, coupling_map=None, use_qubit_mapping=True, index_mapping=None):
+                                    x_train=None, use_qiskit=False, basis_gates=None, coupling_map=None, use_qubit_mapping=True, index_mapping=None, use_real_backend=False):
     """
     Compute Clifford Noise Robustness for a circuit using the noiseless and noisy devices passed in. num_cdc Clifford decoys will be used
     to compute the Clifford Noise Robustness.
@@ -98,7 +117,7 @@ def compute_clifford_nr_for_circuit(circ_dir, noisy_dev, noiseless_dev, device_n
         circ_gates, gate_params, inputs_bounds, weights_bounds, num_qubits,
         noiseless_dev, noisy_dev, qubit_mapping, num_cdcs=num_cdcs,
         num_shots=num_shots, qiskit=use_qiskit, coupling_map=coupling_map,
-        basis_gates=basis_gates,
+        basis_gates=basis_gates, use_real_backend=use_real_backend
     )
     
     np.savetxt(device_noise_metric_dir + '/cnr.txt', [clifford_fid])
@@ -143,9 +162,12 @@ def compute_clifford_nr_for_circuit(circ_dir, noisy_dev, noiseless_dev, device_n
         return clifford_fid
     
                                                                              
-def compute_clifford_nr_for_circuits(circ_dir, num_circs, device_name, num_qubits, num_cdcs, num_shots, compute_actual_fidelity=False, num_trial_params=128,
-                                     dataset=None, embed_type=None, data_reps=None, noise_model=None, use_qiskit=False, basis_gates=None, coupling_map=None,
-                                     use_qubit_mapping=False, save=False, index_mapping=None, circ_index_offset=0, dataset_file_extension='txt'):
+def compute_clifford_nr_for_circuits(circ_dir, num_circs, device_name,
+    num_qubits, num_cdcs, num_shots, compute_actual_fidelity=False,
+    num_trial_params=128, dataset=None, embed_type=None, data_reps=None,
+    noise_model=None, use_qiskit=False, basis_gates=None, coupling_map=None,
+    use_qubit_mapping=False, save=False, index_mapping=None,
+    circ_index_offset=0, dataset_file_extension='txt', use_real_backend=False):
     """
     Compute the Clifford Noise Robustness for a group of circuits stored in the same directory.
     """
@@ -163,11 +185,11 @@ def compute_clifford_nr_for_circuits(circ_dir, num_circs, device_name, num_qubit
 #         noisy_dev = AerSimulator(noise_model=noise_model, basis_gates=basis_gates, coupling_map=coupling_map)
         noisy_dev = AerSimulator(noise_model=noise_model, basis_gates=['cx', 'rz', 'x', 's', 'id', 'h', 'z', 'y'], coupling_map=coupling_map)
     else:
-        noiseless_dev = qml.device('lightning.qubit', wires=num_qubits)
-        
-        if noise_model is None:
-            noisy_dev = noisy_dev_from_backend(device_name, num_qubits)
+        if use_real_backend:
+            noisy_dev = get_braket_device(device_name)
+            noiseless_dev = LocalSimulator()
         else:
+            noiseless_dev = qml.device('lightning.qubit', wires=num_qubits)
             noisy_dev = qml.device('qiskit.aer', noise_model=noise_model, wires=num_qubits, coupling_map=coupling_map, basis_gates=basis_gates)  
 
     noise_metric_scores = []
@@ -179,7 +201,8 @@ def compute_clifford_nr_for_circuits(circ_dir, num_circs, device_name, num_qubit
             compute_clifford_nr_for_circuit(
                 curr_circ_dir, noisy_dev, noiseless_dev, device_name, num_qubits, num_cdcs,
                 num_shots, compute_actual_fidelity, num_trial_params, x_train,
-                use_qiskit, basis_gates, coupling_map, use_qubit_mapping, index_mapping
+                use_qiskit, basis_gates, coupling_map, use_qubit_mapping, index_mapping,
+                use_real_backend
             )
         )
         

@@ -1,4 +1,3 @@
-import qiskit
 import numpy as np
 
 
