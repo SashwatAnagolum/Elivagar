@@ -13,9 +13,67 @@ from torchquantum.operators import Operation
 from tc.tc_fc import TTLinear
 from braket.circuits import Circuit
 
+
+def gpi_matrix(params):
+    phi = params.type(torch.complex64)[:, 0]
+
+    matrix = torch.zeros(
+        (2, 2), device=params.device,
+        dtype=torch.complex64
+    ).unsqueeze(0).repeat(params.shape[0], 1, 1)  
+
+    matrix[:, 0, 1] = torch.exp(-1j * phi)
+    matrix[:, 1, 0] = torch.exp(1j * phi)
+
+    return matrix.squeeze(0) 
+
+
+def gpi2_matrix(params):
+    phi = params.type(torch.complex64)[:, 0]
+
+    matrix = torch.eye(
+        2, device=params.device,
+        dtype=torch.complex64
+    ).unsqueeze(0).repeat(params.shape[0], 1, 1)  
+
+    matrix[:, 0, 1] = -1j * torch.exp(-1j * phi)
+    matrix[:, 1, 0] = -1j * torch.exp(1j * phi)
+
+    matrix *= 1 / (2 ** 0.5)
+
+    return matrix.squeeze(0)
+
+
+def ms_matrix(params):
+    phi_0 = params[:, 0].type(torch.complex64)
+    phi_1 = params[:, 1].type(torch.complex64)
+    theta = params[:, 2].type(torch.complex64)
+
+    cos_theta = torch.cos(theta * 0.5)
+    sin_theta = torch.sin(theta * 0.5)
+    phis_sum_exp = -1j * torch.exp(1j * (phi_0 + phi_1))
+    phis_diff_exp = -1j * torch.exp(1j * (phi_0 - phi_1))
+
+    matrix = torch.zeros(
+        (4, 4), params.device,
+        dtype=torch.complex64
+    ).unsqueeze(0).repeat(params.shape[0], 1, 1)
+
+    matrix[:, 0, 0] = cos_theta
+    matrix[:, 1, 1] = cos_theta
+    matrix[:, 2, 2] = cos_theta
+    matrix[:, 3, 3] = cos_theta
+
+    matrix[:, 0, 3] = phis_sum_exp * sin_theta
+    matrix[:, 3, 0] = phis_sum_exp * sin_theta
+
+    matrix[:, 1, 2] = phis_diff_exp * sin_theta
+    matrix[:, 2, 1] = phis_diff_exp * sin_theta
+
+    return matrix.squeeze(0)
+
+
 def ecr_matrix(params):
-    imag = 1j
-    
     matrix = torch.tensor(
         [[0, 0, 1, 1j], [0, 0, 1j, 1], [1, -1j, 0, 0], [-1j, 1, 0, 0]],
         dtype=torch.complex64
@@ -52,8 +110,38 @@ def rxy_matrix(params):
     return matrix.squeeze(0)
 
 
+def gpi(q_device, wires, params=None, n_wires=None, static=False,
+        parent_graph=None, inverse=False, comp_method='bmm'):
+    gate_wrapper(
+        name='gpi', mat=gpi_matrix, method=comp_method,
+        q_device=q_device, wires=wires, params=params,
+        n_wires=n_wires, static=static, parent_graph=parent_graph,
+        inverse=inverse
+    )
+
+
+def gpi2(q_device, wires, params=None, n_wires=None, static=False,
+        parent_graph=None, inverse=False, comp_method='bmm'):
+    gate_wrapper(
+        name='gpi2', mat=gpi2_matrix, method=comp_method,
+        q_device=q_device, wires=wires, params=params,
+        n_wires=n_wires, static=static, parent_graph=parent_graph,
+        inverse=inverse
+    )
+
+
+def ms(q_device, wires, params=None, n_wires=None, static=False,
+        parent_graph=None, inverse=False, comp_method='bmm'):
+    gate_wrapper(
+        name='ms', mat=ms_matrix, method=comp_method,
+        q_device=q_device, wires=wires, params=params,
+        n_wires=n_wires, static=static, parent_graph=parent_graph,
+        inverse=inverse
+    )
+
+
 def ecr(q_device, wires, params=None, n_wires=None, static=False, parent_graph=None, inverse=False, comp_method='bmm'):
-    gate_wrapper(name='cp', mat=ecr_matrix, method=comp_method,
+    gate_wrapper(name='ecr', mat=ecr_matrix, method=comp_method,
         q_device=q_device, wires=wires, params=params,
         n_wires=n_wires, static=static,
         parent_graph=parent_graph, inverse=inverse)
@@ -72,6 +160,36 @@ def rxy(q_device, wires, params=None, n_wires=None, static=False, parent_graph=N
         n_wires=n_wires, static=static,
         parent_graph=parent_graph, inverse=inverse)
     
+
+class GPI(Operation):
+    num_params = 1
+    num_wires = 1
+    func = staticmethod(gpi)
+    
+    @classmethod
+    def _matrix(cls, params):
+        return gpi_matrix(params)
+    
+
+class GPI2(Operation):
+    num_params = 1
+    num_wires = 1
+    func = staticmethod(gpi2)
+    
+    @classmethod
+    def _matrix(cls, params):
+        return gpi2_matrix(params)
+    
+
+class MS(Operation):
+    num_params = 3
+    num_wires = 2
+    func = staticmethod(ms)
+    
+    @classmethod
+    def _matrix(cls, params):
+        return ms_matrix(params)
+
 
 class RXY(Operation):
     num_params = 1
@@ -353,7 +471,10 @@ class TQCirc(tq.QuantumModule):
             'cp': CPhase,
             'cphaseshift': CPhase,
             'rxy': RXY,
-            'xy': RXY
+            'xy': RXY,
+            'gpi': GPI,
+            'gpi2': GPI2,
+            'ms': MS
         }  
 
         non_trainable_mapping = {
@@ -378,8 +499,11 @@ class TQCirc(tq.QuantumModule):
             'cphaseshift': cphase,
             'rxy': rxy,
             'xy': rxy,
-            'amp_enc': tq.StateEncoder()
-        } 
+            'amp_enc': tq.StateEncoder(),
+            'gpi': gpi,
+            'gpi2': gpi2,
+            'ms': ms
+        }
         
         self.n_wires = num_qubits
         self.device = tq.QuantumDevice(n_wires=self.n_wires)

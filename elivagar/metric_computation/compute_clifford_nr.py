@@ -178,19 +178,21 @@ def compute_clifford_nr_for_circuits(circ_dir, num_circs, device_name,
         
     if use_qiskit:
         noiseless_dev = AerSimulator()
-        
-        if noise_model is None:
+        noise_model = None
+        basis_gates = None
+        coupling_map = None
+
+        if noise_model is None and ('ibm' in device_name):
             noise_model, basis_gates, coupling_map = get_noise_model(device_name)
             
-#         noisy_dev = AerSimulator(noise_model=noise_model, basis_gates=basis_gates, coupling_map=coupling_map)
-        noisy_dev = AerSimulator(noise_model=noise_model, basis_gates=['cx', 'rz', 'x', 's', 'id', 'h', 'z', 'y'], coupling_map=coupling_map)
+        noisy_dev = AerSimulator(noise_model=noise_model, basis_gates=basis_gates, coupling_map=coupling_map)
+        # noisy_dev = AerSimulator(noise_model=noise_model, basis_gates=['cx', 'rz', 'x', 's', 'id', 'h', 'z', 'y'], coupling_map=coupling_map)
     else:
         if use_real_backend:
             noisy_dev = get_braket_device(device_name)
             noiseless_dev = LocalSimulator()
         else:
-            noiseless_dev = qml.device('lightning.qubit', wires=num_qubits)
-            noisy_dev = qml.device('qiskit.aer', noise_model=noise_model, wires=num_qubits, coupling_map=coupling_map, basis_gates=basis_gates)  
+            raise ValueError('Cannot set both use_real_backend and use_qiskit to False!')
 
     noise_metric_scores = []
     

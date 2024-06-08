@@ -1,26 +1,50 @@
 import numpy as np
 
 
-def get_braket_device_qubit_edge_info(device=None, dev_properties=None):
+def get_braket_device_qubit_edge_info(device=None, dev_properties=None,
+                                      device_name=None):
     # Need to check the exact location for each device currently due to
     # inconsistencies in the Braket API.
     if device:
         dev_properties = device.properties
-    
-    try:
-        # OQC lucy
-        
+
+    if device_name == 'oqc_lucy':
         calibration_data = dev_properties.provider.properties
         one_qubit_data = calibration_data['one_qubit']
         two_qubit_data = calibration_data['two_qubit']
         gate_names_2q = {'ecr': 'fCX'}
         gate_names_1q = {'rz': None, 'x': 'fRB', 'v': 'fRB'}
-    except AttributeError:
+    elif device_name == 'rigetti_aspen_m_3':
         calibration_data = dev_properties.provider.specs
         one_qubit_data = calibration_data['1Q']
         two_qubit_data = calibration_data['2Q']
         gate_names_2q = {'cphaseshift': 'fCPHASE', 'xy': 'fXY', 'cz': 'fCZ'} 
         gate_names_1q = {'rx': 'f1QRB', 'rz': None}
+    elif device_name == 'ionq_harmony':
+        qubit_count = dev_properties.paradigm.qubitCount
+        fidelities = dev_properties.provider.fidelity
+        timings = dev_properties.provider.timing
+
+        one_qubit_data = {
+            str(i): {
+                '1Q': fidelities['1Q']['mean'],
+                'fRO': fidelities['spam']['mean'],
+                'T1': timings['T1'],
+                'T2': timings['T2']
+            }
+            for i in range(qubit_count)
+        }
+
+        two_qubit_data = {
+            f'{i}-{j}': {'2Q': fidelities['2Q']['mean']}
+            for i in range(qubit_count) for j in range(qubit_count)
+            if i != j
+        }
+
+        gate_names_1q = {'GPI': '1Q', 'GPI2': '1Q'}
+        gate_names_2q = {'MS': '2Q'}
+    else:
+        raise ValueError(f'Device {device_name} not supported!')
         
     return one_qubit_data, two_qubit_data, gate_names_2q, gate_names_1q
 
@@ -37,7 +61,17 @@ def get_braket_device_connectivity(device, qubit_inds, dev_properties=None):
         dev_properties = device.properties
     
     connectivity_raw = dev_properties.paradigm.connectivity.connectivityGraph
+    fully_connected = False
+
+    if 'fullyConnected' in dir(dev_properties.paradigm.connectivity):
+        fully_connected = dev_properties.paradigm.connectivity.fullyConnected
     
+    if fully_connected:
+        connectivity_raw = {
+            str(qubit): [str(q) for q in qubit_inds if q != qubit]
+            for qubit in qubit_inds
+        }
+
     keys = list(connectivity_raw.keys())
 
     connectivity = dict()
@@ -58,21 +92,22 @@ def get_braket_device_connectivity(device, qubit_inds, dev_properties=None):
 def get_braket_device_native_gates(device, dev_properties=None):
     if dev_properties is None:
         dev_properties = device.properties
-    
+
     # need to hard-code for now
     gate_num_qubits = {'ecr': 2, 'cx': 2, 'rx': 1, 'rz': 1, 'v': 1, 'x': 1,
-                       'xy': 2, 'cz': 2, 'cphaseshift': 2}
-    
+                       'xy': 2, 'cz': 2, 'cphaseshift': 2, 'gpi': 1, 'gpi2': 1,
+                       'ms': 2}
+
     native_gates_raw = dev_properties.paradigm.nativeGateSet
-    
+
     if 'i' in native_gates_raw:
         native_gates_raw.remove('i')
-    
+
     basis_gates = [[], []]
-    
+
     for gate in native_gates_raw:
-        basis_gates[gate_num_qubits[gate] - 1].append(gate)
-        
+        basis_gates[gate_num_qubits[gate.lower()] - 1].append(gate.lower())
+
     return basis_gates
 
 
@@ -80,32 +115,43 @@ def get_braket_device_gate_num_params(basis_gates):
     # need to hard-code for now
     gates_parameters = {'rz': 1, 'cx': 0, 'sx': 0, 'x': 0, 'y': 0, 'z': 0,
                         'cz': 0, 'h': 0, 'rx': 1, 'ry': 1, 'ecr': 0,
-                        'v': 0, 'xy': 1, 'cphaseshift': 1}    
-    
-    gate_params = [[gates_parameters[gate] for gate in basis_gates[i]] for i in range(2)]
-        
+                        'v': 0, 'xy': 1, 'cphaseshift': 1, 'gpi': 1,
+                        'gpi2': 1, 'ms': 3}    
+
+    gate_params = [
+        [gates_parameters[gate] for gate in basis_gates[i]]
+        for i in range(2)
+    ]
+
     return gate_params
 
 
-def get_braket_device_coherence_times(one_qubit_data, qubit_indices):  
-    t1_times = {qubit: one_qubit_data[str(qubit)]['T1'] for qubit in qubit_indices}
-    t2_times = {qubit: one_qubit_data[str(qubit)]['T2'] for qubit in qubit_indices}
+def get_braket_device_coherence_times(one_qubit_data, qubit_indices):
+    t1_times = {
+        qubit: one_qubit_data[str(qubit)]['T1']
+        for qubit in qubit_indices
+    }
+
+    t2_times = {
+        qubit: one_qubit_data[str(qubit)]['T2']
+        for qubit in qubit_indices
+    }
 
     return t1_times, t2_times
-  
+
 
 def get_braket_device_1q_succ_probs(qubit_indices, one_qubit_data, gate_names_1q):
     one_qubit_gate_succ_probs = dict()
-    
+
     for qubit in qubit_indices:
         one_qubit_gate_succ_probs[qubit] = dict()
-        
+
         for gate, gate_error_name in gate_names_1q.items():
             if gate_error_name is None:
                 one_qubit_gate_succ_probs[qubit][gate] = 1.0
             else:
                 one_qubit_gate_succ_probs[qubit][gate] = one_qubit_data[str(qubit)][gate_error_name]
-        
+
     return one_qubit_gate_succ_probs
     
     
@@ -133,7 +179,7 @@ def get_braket_device_2q_succ_probs(connectivity, qubit_indices, basis_gates, ga
                             pass                       
 
                     two_qubit_gate_succ_probs[qubit][gate][paired_qubit] = curr_gate_fid
-                    
+
     return two_qubit_gate_succ_probs
     
     
@@ -164,8 +210,13 @@ def get_braket_device_gate_times(qubit_inds, connectivity, one_qubit_data,
     return gate_times
 
 
-def extract_properties_from_braket_device(device=None, dev_properties=None, symmetric=False):
-    one_qubit_data, two_qubit_data, gate_names_2q, gate_names_1q = get_braket_device_qubit_edge_info(device, dev_properties)
+def extract_properties_from_braket_device(device_name, device=None,
+                                          dev_properties=None,
+                                          symmetric=False):
+    (
+        one_qubit_data, two_qubit_data, gate_names_2q, gate_names_1q
+    ) = get_braket_device_qubit_edge_info(device, dev_properties, device_name)
+
     qubit_indices = get_braket_device_qubit_inds(one_qubit_data)
     connectivity, coupling_map = get_braket_device_connectivity(device, qubit_indices, dev_properties)
     basis_gates = get_braket_device_native_gates(device, dev_properties)
@@ -269,20 +320,26 @@ def generate_qubit_mappings(connectivity, num_device_qubits, num_qubits, qubit_i
     qubit_mappings = []
     mapping_edges = []
 
-    sample_probs_connectivity = np.exp([len(connectivity[qubit_inds[i]])
-                                        for i in range(num_device_qubits)]).astype(np.float32)   
+    sample_probs_connectivity = np.exp(
+        [
+            len(connectivity[qubit_inds[i]])
+            for i in range(num_device_qubits)
+        ]
+    ).astype(np.float32)
 
     sample_probs_connectivity /= np.sum(sample_probs_connectivity)
-    
+
     for i in range(num_trials):
         curr_mapping = []
-        curr_mapping.append(np.random.choice(qubit_inds, p=sample_probs_connectivity))
-        
+        curr_mapping.append(
+            np.random.choice(qubit_inds, p=sample_probs_connectivity)
+        )
+
         mapping_found = True
-        
+
         while len(curr_mapping) < num_qubits:
             qubit_added = False
-            
+
             for selected_qubit in np.random.permutation(curr_mapping):
                 for connected_qubit in np.random.permutation(connectivity[selected_qubit]):
                     if connected_qubit not in curr_mapping:
@@ -304,7 +361,7 @@ def generate_qubit_mappings(connectivity, num_device_qubits, num_qubits, qubit_i
                           for qubit in curr_mapping]
     
             mapping_edges.append([i for j in curr_edges for i in j])
-        
+
     return qubit_mappings, mapping_edges
 
 
@@ -327,7 +384,7 @@ def compute_mappings_quality(mappings, edges, t1_times, t2_times, meas_succ_prob
     
     mappings_quality = np.array(mappings_quality)
     mappings_quality -= np.min(mappings_quality)
-    mappings_quality /= np.max(mappings_quality)
+    mappings_quality /= (np.max(mappings_quality) + 1e-5)
         
     return mappings_quality
 
@@ -463,13 +520,22 @@ def find_edge_placement(circ_gates, gate_params, new_gate, edges, num_gates_on_q
     
     
     
-def generate_device_aware_gate_circ(ibm_backend, num_qubits, num_embed_gates, num_var_params=0, ent_prob=0.5, add_rotation_gates=False,
-                                    param_focus=2, num_meas_qubits=1, num_trial_mappings=100, temp=1e-2, num_device_qubits=None, connectivity=None, t1_times=None,
-                                   t2_times=None, meas_succ_probs=None, basis_gates=None, gates_param_nums=None,
-                                   gate_times=None, ent_succ_probs=None, braket_device_properties=None):
+def generate_device_aware_gate_circ(ibm_backend, num_qubits, num_embed_gates,
+                                    num_var_params=0, ent_prob=0.5,
+                                    add_rotation_gates=False, param_focus=2,
+                                    num_meas_qubits=1, num_trial_mappings=100,
+                                    temp=1e-2, num_device_qubits=None,
+                                    connectivity=None, t1_times=None,
+                                    t2_times=None, meas_succ_probs=None,
+                                    basis_gates=None, gates_param_nums=None,
+                                    gate_times=None, ent_succ_probs=None, 
+                                    braket_device_properties=None,
+                                    braket_device_name=None,
+                                    symmetric_connectivity=False):
     """
-    Generate a device-aware circuit via biased random sampling, along with a qubit mapping from logical to physical
-    qubit based on device connectivity and calibration data.
+    Generate a device-aware circuit via biased random sampling,
+    along with a qubit mapping from logical to physical
+    qubits based on device connectivity and calibration data.
     """
     if ibm_backend is not None:
         (
@@ -480,35 +546,34 @@ def generate_device_aware_gate_circ(ibm_backend, num_qubits, num_embed_gates, nu
             ibm_backend
         )
         
-    if braket_device_properties is not None:        
+    if braket_device_properties is not None:
         (
             num_device_qubits, connectivity, t1_times, t2_times, meas_succ_probs,
             basis_gates, gates_param_nums, gate_times, ent_succ_probs,
             one_qubit_succ_probs, qubit_inds
         ) = extract_properties_from_braket_device(
-            None, braket_device_properties
+            braket_device_name, None,
+            braket_device_properties, symmetric_connectivity
         )
 
     # get a good qubit mapping
     
     potential_mappings, mapping_edges = generate_qubit_mappings(connectivity, num_device_qubits, num_qubits,
                                                                 qubit_inds, num_trial_mappings)
-    
+
     coherence_times = {qubit: np.mean([t1_times[qubit], t2_times[qubit]]) for qubit in qubit_inds}
     mappings_quality = compute_mappings_quality(potential_mappings, mapping_edges, t1_times, t2_times,
                                                 meas_succ_probs, ent_succ_probs, gate_times, num_meas_qubits,
                                                 coherence_times, basis_gates[1])
 
     mapping_probs = generate_softmax_dist(mappings_quality, temp)
-    
     best_ind = np.random.choice(len(mapping_probs), p=mapping_probs)
-    
     selected_mapping, selected_mapping_edges = potential_mappings[best_ind], mapping_edges[best_ind]
     sel_map = np.array(selected_mapping)
     sel_edges = [[np.argwhere(sel_map == e[i]).flatten().item() for i in range(2)] for e in selected_mapping_edges]
     
     # select gates based on coherence times for each qubit, current time spent running gates on each qubit, 2q error rates on each qubit pair
-    
+
     if add_rotation_gates:
         for rot_gate in ['ry', 'rz', 'rx']:
             if rot_gate not in basis_gates[0]:
@@ -546,7 +611,7 @@ def generate_device_aware_gate_circ(ibm_backend, num_qubits, num_embed_gates, nu
                 gate_num_qubits = np.random.choice(2, p=curr_qubit_probs)
             else:
                 gate_num_qubits = 0
-            
+
             gate_index = np.random.choice(len(basis_gates[gate_num_qubits]), p=curr_sample_probs[gate_num_qubits])
             new_gate = basis_gates[gate_num_qubits][gate_index]
             
@@ -593,17 +658,24 @@ def generate_device_aware_gate_circ(ibm_backend, num_qubits, num_embed_gates, nu
         
     embeds_indices = np.random.choice(param_indices, num_embed_gates, False)
     
-    for i in range(len(circ_gates)):
+    for i, circ_gate in enumerate(circ_gates):
+        num_qubits_for_gate = len(gate_params[i])
+        num_params_in_gate = gates_param_nums[
+            num_qubits_for_gate - 1
+        ][basis_gates[num_qubits_for_gate - 1].index(circ_gate)]
+
         if i not in param_indices:
             inputs_bounds.append(inputs_bounds[-1])
             weights_bounds.append(weights_bounds[-1])
         else:
             if i in embeds_indices:
-                inputs_bounds.append(inputs_bounds[-1] + 1)
+                inputs_bounds.append(
+                    inputs_bounds[-1] + num_params_in_gate
+                )
                 weights_bounds.append(weights_bounds[-1])
             else:
                 inputs_bounds.append(inputs_bounds[-1])
-                weights_bounds.append(weights_bounds[-1] + 1)
+                weights_bounds.append(weights_bounds[-1] + num_params_in_gate)
                     
     # choose the best qubits to measure
     
